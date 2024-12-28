@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Posições - OptiTask</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="main-navigation">
+        <div class="nav-container">
+            <div class="logo"><a href="index.html">OptiTask</a></div>
+            <ul class="nav-links">
+                <li><a href="index.html">Dashboard</a></li>
+                <li><a href="cadastroPosicoes.html">Posições</a></li>
+                <li><a href="configuracao.html">Configurações</a></li>
+                <li><a href="conferencia.html" class="active">Conferência</a></li>
+                <li><a href="todolist.html">TodoList</a></li>
+                <li><a href="instrucoes.html">Instruções</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Conferência de Posições</h1>
+
+        <div class="positions-section">
+            <h2>Conferência de Posições Picking</h2>
+            <table id="pickingPositionsTable">
+                <thead>
+                    <tr>
+                        <th>Id Posição</th>
+                        <th>SKU</th>
+                        <th>Capacidade</th>
+                        <th>Posições Ocupadas</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="pickingPositionsList"></tbody>
+            </table>
+        </div>
+
+        <div class="positions-section">
+            <h2>Conferência de Posições Pulmão</h2>
+            <table id="pulmaoPositionsTable">
+                <thead>
+                    <tr>
+                        <th>Id Posição</th>
+                        <th>SKU</th>
+                        <th>Capacidade</th>
+                        <th>Posições Ocupadas</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="pulmaoPositionsList"></tbody>
+            </table>
+        </div>
+
+        <div class="todo-section">
+            <button id="generateTodoListBtn" class="btn-primary">Ativar ToDo List</button>
+        </div>
+    </div>
+
+    <script src="conferencia.js"></script>
+</body>
+</html>

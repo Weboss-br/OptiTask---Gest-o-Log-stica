@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Posições - OptiTask</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="main-navigation">
+        <div class="nav-container">
+            <div class="logo"><a href="index.html">OptiTask</a></div>
+            <ul class="nav-links">
+                <li><a href="index.html">Dashboard</a></li>
+                <li><a href="cadastroPosicoes.html" class="active">Posições</a></li>
+                <li><a href="configuracao.html">Configurações</a></li>
+                <li><a href="conferencia.html">Conferência</a></li>
+                <li><a href="todolist.html">TodoList</a></li>
+                <li><a href="instrucoes.html">Instruções</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Cadastro de Posições</h1>
+        
+        <form id="positionForm" class="position-form">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="city">Cidade</label>
+                    <select id="city" required>
+                        <option value="">Selecione a Cidade</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="module">Módulo</label>
+                    <select id="module" required>
+                        <option value="">Selecione o Módulo</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="level">Nível</label>
+                    <select id="level" required>
+                        <option value="">Selecione o Nível</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="column">Coluna</label>
+                    <select id="column" required>
+                        <option value="">Selecione a Coluna</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="positionId">ID Posição</label>
+                    <input type="text" id="positionId" placeholder="Digite o ID da Posição" required>
+                </div>
+                <div class="form-group">
+                    <label for="type">Tipo</label>
+                    <select id="type" required>
+                        <option value="">Selecione o Tipo</option>
+                        <option value="picking">Picking</option>
+                        <option value="pulmao">Pulmão</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="totalCapacity">Capacidade Total (pallets)</label>
+                    <input type="number" id="totalCapacity" placeholder="Digite a capacidade total" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="occupiedPositions">Posições Ocupadas</label>
+                    <input type="number" id="occupiedPositions" placeholder="Digite as posições ocupadas" min="0">
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">Adicionar Posição</button>
+            </div>
+        </form>
+
+        <div class="registered-positions">
+            <h2>Posições Cadastradas</h2>
+            <table id="positionsTable">
+                <thead>
+                    <tr>
+                        <th>ID Posição</th>
+                        <th>Tipo</th>
+                        <th>Capacidade</th>
+                        <th>Ocupadas</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="positionsList"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

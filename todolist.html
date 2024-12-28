@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToDo List - OptiTask</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="main-navigation">
+        <div class="nav-container">
+            <div class="logo"><a href="index.html">OptiTask</a></div>
+            <ul class="nav-links">
+                <li><a href="index.html">Dashboard</a></li>
+                <li><a href="cadastroPosicoes.html">Posições</a></li>
+                <li><a href="configuracao.html">Configurações</a></li>
+                <li><a href="conferencia.html">Conferência</a></li>
+                <li><a href="todolist.html" class="active">TodoList</a></li>
+                <li><a href="instrucoes.html">Instruções</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Lista de Tarefas</h1>
+
+        <div class="todo-list-section">
+            <table id="todoListTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Data/Hora</th>
+                        <th>De</th>
+                        <th>Para</th>
+                        <th>SKU</th>
+                        <th>Descrição</th>
+                        <th>Pallets</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="todoListBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="todolist.js"></script>
+</body>
+</html>

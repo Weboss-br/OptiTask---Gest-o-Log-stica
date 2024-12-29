@@ -21,6 +21,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Usar ActivityTracker para recuperar atividades
     const activities = ActivityTracker.getActivities(5);
 
+    // Log para verificar o conteúdo do localStorage
+    console.log('Conteúdo do localStorage:', {
+        positions: JSON.parse(localStorage.getItem('positions') || '[]'),
+        skus: JSON.parse(localStorage.getItem('skus') || '[]'),
+        todoList: JSON.parse(localStorage.getItem('todoList') || '[]')
+    });
+
     // Métricas de Posições
     const totalPositions = positions.length;
     const pickingPositions = positions.filter(p => p.type === 'picking').length;
@@ -65,22 +72,124 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Tarefas Pendentes
-    if (pendingTasks > 0) {
-        pendingTasksBody.innerHTML = '';
-        todoList.filter(t => t.status === 'pending').forEach(task => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${task.fromPosition}</td>
-                <td>${task.skuCode}</td>
-                <td>${task.palletsToTransfer} Pallets</td>
-                <td>Pendente</td>
-                <td>
-                    <button class="btn-action">Detalhes</button>
-                    <button class="btn-action">Iniciar</button>
-                </td>
-            `;
-            pendingTasksBody.appendChild(tr);
+    function updatePendingTasks() {
+        console.log(' Iniciando updatePendingTasks()');
+        
+        // Recuperar lista de tarefas do localStorage
+        const todoList = JSON.parse(localStorage.getItem('todoList') || '[]');
+        
+        console.log('Lista de tarefas recuperada:', todoList);
+        console.log('Número total de tarefas:', todoList.length);
+        
+        // Filtrar tarefas pendentes
+        const pendingTasks = todoList.filter(task => {
+            console.log('Verificando tarefa:', task);
+            console.log('Status da tarefa:', task.status);
+            console.log('Tipo de status:', typeof task.status);
+            return task.status === 'pending';
         });
+        
+        console.log('Tarefas pendentes:', pendingTasks);
+        console.log('Número de tarefas pendentes:', pendingTasks.length);
+        
+        // Atualizar elemento de tarefas pendentes
+        const pendingTasksElement = document.getElementById('pendingTasks');
+        if (pendingTasksElement) {
+            pendingTasksElement.textContent = pendingTasks.length;
+            console.log(' Número de tarefas pendentes atualizado');
+        } else {
+            console.error(' Elemento pendingTasks não encontrado');
+        }
+        
+        // Atualizar tabela de tarefas pendentes
+        const pendingTasksBody = document.getElementById('pendingTasksBody');
+        
+        if (!pendingTasksBody) {
+            console.error(' Elemento pendingTasksBody não encontrado');
+            return;
+        }
+        
+        console.log(' Preparando renderização de tarefas pendentes');
+        
+        // Limpar tabela anterior
+        pendingTasksBody.innerHTML = '';
+        
+        // Adicionar tarefas pendentes à tabela
+        if (pendingTasks.length > 0) {
+            console.log(' Existem tarefas pendentes para renderizar');
+            pendingTasks.forEach((task, index) => {
+                console.log(`Detalhes da tarefa ${index + 1}:`, {
+                    id: task.id,
+                    fromPosition: task.fromPosition,
+                    toPosition: task.toPosition,
+                    skuCode: task.skuCode,
+                    palletsToTransfer: task.palletsToTransfer,
+                    status: task.status,
+                    keys: Object.keys(task)
+                });
+                
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${task.fromPosition || 'N/A'}</td>
+                    <td>${task.toPosition || 'N/A'}</td>
+                    <td>${task.skuCode || 'N/A'}</td>
+                    <td>${task.palletsToTransfer || 0} Pallets</td>
+                `;
+                pendingTasksBody.appendChild(tr);
+                console.log(' Tarefa renderizada:', task.id);
+                
+                // Log do conteúdo da linha
+                console.log('Conteúdo da linha:', tr.innerHTML);
+            });
+            
+            // Log do conteúdo final da tabela
+            console.log(' Conteúdo final da tabela:', pendingTasksBody.innerHTML);
+        } else {
+            console.log(' Nenhuma tarefa pendente para renderizar');
+            // Se não houver tarefas pendentes, mostrar mensagem
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td colspan="4">Nenhuma tarefa pendente</td>`;
+            pendingTasksBody.appendChild(tr);
+        }
+        
+        console.log(' Fim de updatePendingTasks()');
+    }
+
+    updatePendingTasks();
+
+    // Funções para manipular tarefas
+    function startTask(taskId) {
+        const todoList = JSON.parse(localStorage.getItem('todoList') || '[]');
+        const updatedTodoList = todoList.map(task => 
+            task.id === taskId ? {...task, status: 'in_progress'} : task
+        );
+        
+        localStorage.setItem('todoList', JSON.stringify(updatedTodoList));
+        
+        // Adicionar atividade de rastreamento
+        ActivityTracker.addActivity(
+            `Tarefa ${taskId} iniciada`, 
+            ActivityTracker.types.TAREFA
+        );
+        
+        updatePendingTasks();
+    }
+
+    function cancelTask(taskId) {
+        const todoList = JSON.parse(localStorage.getItem('todoList') || '[]');
+        const updatedTodoList = todoList.map(task => 
+            task.id === taskId ? {...task, status: 'cancelled'} : task
+        );
+        
+        localStorage.setItem('todoList', JSON.stringify(updatedTodoList));
+        
+        // Adicionar atividade de rastreamento
+        ActivityTracker.addActivity(
+            `Tarefa ${taskId} cancelada`, 
+            ActivityTracker.types.TAREFA
+        );
+        
+        updatePendingTasks();
     }
 
     // Listener para novas atividades
@@ -379,44 +488,86 @@ window.addEventListener('storage', updateDashboardMetrics);
 
 // Função para atualizar métricas de tarefas pendentes
 function updatePendingTasks() {
+    console.log(' Iniciando updatePendingTasks()');
+    
     // Recuperar lista de tarefas do localStorage
     const todoList = JSON.parse(localStorage.getItem('todoList') || '[]');
     
-    // Contar tarefas pendentes
-    const pendingTasks = todoList.filter(task => task.status === 'pending').length;
+    console.log('Lista de tarefas recuperada:', todoList);
+    console.log('Número total de tarefas:', todoList.length);
+    
+    // Filtrar tarefas pendentes
+    const pendingTasks = todoList.filter(task => {
+        console.log('Verificando tarefa:', task);
+        console.log('Status da tarefa:', task.status);
+        console.log('Tipo de status:', typeof task.status);
+        return task.status === 'pending';
+    });
+    
+    console.log('Tarefas pendentes:', pendingTasks);
+    console.log('Número de tarefas pendentes:', pendingTasks.length);
     
     // Atualizar elemento de tarefas pendentes
-    document.getElementById('pendingTasks').textContent = pendingTasks;
+    const pendingTasksElement = document.getElementById('pendingTasks');
+    if (pendingTasksElement) {
+        pendingTasksElement.textContent = pendingTasks.length;
+        console.log(' Número de tarefas pendentes atualizado');
+    } else {
+        console.error(' Elemento pendingTasks não encontrado');
+    }
     
     // Atualizar tabela de tarefas pendentes
     const pendingTasksBody = document.getElementById('pendingTasksBody');
+    
+    if (!pendingTasksBody) {
+        console.error(' Elemento pendingTasksBody não encontrado');
+        return;
+    }
+    
+    console.log(' Preparando renderização de tarefas pendentes');
     
     // Limpar tabela anterior
     pendingTasksBody.innerHTML = '';
     
     // Adicionar tarefas pendentes à tabela
-    if (pendingTasks > 0) {
-        todoList
-            .filter(task => task.status === 'pending')
-            .forEach(task => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${task.position || 'N/A'}</td>
-                    <td>${task.sku || 'N/A'}</td>
-                    <td>${task.quantity || 'N/A'}</td>
-                    <td>${task.status}</td>
-                    <td>
-                        <button onclick="completeTask('${task.id}')">Concluir</button>
-                    </td>
-                `;
-                pendingTasksBody.appendChild(tr);
+    if (pendingTasks.length > 0) {
+        console.log(' Existem tarefas pendentes para renderizar');
+        pendingTasks.forEach((task, index) => {
+            console.log(`Detalhes da tarefa ${index + 1}:`, {
+                id: task.id,
+                fromPosition: task.fromPosition,
+                toPosition: task.toPosition,
+                skuCode: task.skuCode,
+                palletsToTransfer: task.palletsToTransfer,
+                status: task.status,
+                keys: Object.keys(task)
             });
+            
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${task.fromPosition || 'N/A'}</td>
+                <td>${task.toPosition || 'N/A'}</td>
+                <td>${task.skuCode || 'N/A'}</td>
+                <td>${task.palletsToTransfer || 0} Pallets</td>
+            `;
+            pendingTasksBody.appendChild(tr);
+            console.log(' Tarefa renderizada:', task.id);
+            
+            // Log do conteúdo da linha
+            console.log('Conteúdo da linha:', tr.innerHTML);
+        });
+        
+        // Log do conteúdo final da tabela
+        console.log(' Conteúdo final da tabela:', pendingTasksBody.innerHTML);
     } else {
+        console.log(' Nenhuma tarefa pendente para renderizar');
         // Se não houver tarefas pendentes, mostrar mensagem
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td colspan="5">Nenhuma tarefa pendente</td>`;
+        tr.innerHTML = `<td colspan="4">Nenhuma tarefa pendente</td>`;
         pendingTasksBody.appendChild(tr);
     }
+    
+    console.log(' Fim de updatePendingTasks()');
 }
 
 // Adicionar função para concluir tarefa
@@ -535,3 +686,35 @@ function addCity(cityName) {
     
     return true;
 }
+
+// Função de debug para localStorage
+function debugLocalStorage() {
+    console.log('=== DEBUG LOCAL STORAGE ===');
+    
+    // Listar todas as chaves no localStorage
+    console.log('Chaves no localStorage:', Object.keys(localStorage));
+    
+    // Itens específicos
+    const items = [
+        'todoList', 
+        'positions', 
+        'skus', 
+        'activities'
+    ];
+    
+    items.forEach(key => {
+        try {
+            const item = localStorage.getItem(key);
+            console.log(`Conteúdo de ${key}:`, item ? JSON.parse(item) : 'Não encontrado');
+        } catch (error) {
+            console.error(`Erro ao parsear ${key}:`, error);
+        }
+    });
+    
+    console.log('=== FIM DEBUG LOCAL STORAGE ===');
+}
+
+// Chamar no carregamento da página
+document.addEventListener('DOMContentLoaded', () => {
+    debugLocalStorage();
+});

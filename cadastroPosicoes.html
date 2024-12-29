@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Posições - OptiTask</title>
+    <title>Cadastro de Posições - OptiTask</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -13,11 +14,21 @@
             <ul class="nav-links">
                 <li><a href="index.html">Dashboard</a></li>
                 <li><a href="cadastroPosicoes.html" class="active">Posições</a></li>
-                <li><a href="configuracao.html">Configurações</a></li>
                 <li><a href="conferencia.html">Conferência</a></li>
                 <li><a href="todolist.html">TodoList</a></li>
-                <li><a href="instrucoes.html">Instruções</a></li>
+                <li><a href="configuracao.html">Configurações</a></li>
             </ul>
+            <div class="nav-icons">
+                <button id="exportData" title="Exportar Dados">
+                    <i class="fas fa-download"></i>
+                </button>
+                <button id="importData" title="Importar Dados">
+                    <i class="fas fa-upload"></i>
+                </button>
+                <button id="usageInstructions" title="Instruções de Uso" onclick="window.location.href='instrucoes.html'">
+                    <i class="fas fa-question-circle"></i>
+                </button>
+            </div>
         </div>
     </nav>
 
@@ -35,7 +46,7 @@
                 <div class="form-group">
                     <label for="module">Módulo</label>
                     <select id="module" required>
-                        <option value="">Selecione o Módulo</option>
+                        <option value="">Selecione um Módulo</option>
                     </select>
                 </div>
             </div>
@@ -44,13 +55,13 @@
                 <div class="form-group">
                     <label for="level">Nível</label>
                     <select id="level" required>
-                        <option value="">Selecione o Nível</option>
+                        <option value="">Selecione um Nível</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label for="column">Coluna</label>
                     <select id="column" required>
-                        <option value="">Selecione a Coluna</option>
+                        <option value="">Selecione uma Coluna</option>
                     </select>
                 </div>
             </div>
@@ -58,7 +69,7 @@
             <div class="form-grid">
                 <div class="form-group">
                     <label for="positionId">ID Posição</label>
-                    <input type="text" id="positionId" placeholder="Digite o ID da Posição" required>
+                    <input type="text" id="positionId" placeholder="" required>
                 </div>
                 <div class="form-group">
                     <label for="type">Tipo</label>
@@ -103,6 +114,8 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="activities.js"></script>
+    <script src="index.js"></script>
+    <script src="cadastroPosicoes.js"></script>
 </body>
 </html>

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ToDo List - OptiTask</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -13,11 +14,21 @@
             <ul class="nav-links">
                 <li><a href="index.html">Dashboard</a></li>
                 <li><a href="cadastroPosicoes.html">Posições</a></li>
-                <li><a href="configuracao.html">Configurações</a></li>
                 <li><a href="conferencia.html">Conferência</a></li>
                 <li><a href="todolist.html" class="active">TodoList</a></li>
-                <li><a href="instrucoes.html">Instruções</a></li>
+                <li><a href="configuracao.html">Configurações</a></li>
             </ul>
+            <div class="nav-icons">
+                <button id="exportData" title="Exportar Dados">
+                    <i class="fas fa-download"></i>
+                </button>
+                <button id="importData" title="Importar Dados">
+                    <i class="fas fa-upload"></i>
+                </button>
+                <button id="usageInstructions" title="Instruções de Uso" onclick="window.location.href='instrucoes.html'">
+                    <i class="fas fa-question-circle"></i>
+                </button>
+            </div>
         </div>
     </nav>
 
@@ -44,6 +55,8 @@
         </div>
     </div>
 
+    <script src="activities.js"></script>
+    <script src="index.js"></script>
     <script src="todolist.js"></script>
 </body>
 </html>

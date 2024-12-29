@@ -54,10 +54,21 @@
             <ul class="nav-links">
                 <li><a href="index.html">Dashboard</a></li>
                 <li><a href="cadastroPosicoes.html">Posições</a></li>
-                <li><a href="configuracao.html">Configurações</a></li>
                 <li><a href="conferencia.html">Conferência</a></li>
                 <li><a href="todolist.html">TodoList</a></li>
+                <li><a href="configuracao.html">Configurações</a></li>
             </ul>
+            <div class="nav-icons">
+                <button id="exportData" title="Exportar Dados">
+                    <i class="fas fa-download"></i>
+                </button>
+                <button id="importData" title="Importar Dados">
+                    <i class="fas fa-upload"></i>
+                </button>
+                <button id="usageInstructions" title="Instruções de Uso" onclick="window.location.href='instrucoes.html'">
+                    <i class="fas fa-question-circle"></i>
+                </button>
+            </div>
         </div>
     </nav>
 
@@ -65,7 +76,15 @@
         <div class="instructions-container">
             <div class="instructions-section">
                 <h2>Bem-vindo ao OptiTask</h2>
-                <p>OptiTask é um sistema de gerenciamento logístico desenvolvido por Dieter Heiss (weboss.com.br), projetado para otimizar e simplificar processos de controle de estoque e tarefas logísticas.</p>
+                <p>Bem-vindo ao OptiTask!
+
+                    O OptiTask é um sistema de gerenciamento logístico desenvolvido por Dieter Heiss (weboss.com.br), projetado para organizar o estoque e otimizar tarefas rotineiras com simplicidade e funcionalidade, sem burocracias.</p>
+                    
+                    <p>Diferente de sistemas tradicionais, o OptiTask dispensa o uso de banco de dados, garantindo uma operação prática e direta, sem a necessidade de integrações complexas e desnecessárias.</p>
+                    
+                    <p>Na logística, sabemos que muitas vezes as exceções são a regra: pallets nem sempre possuem a quantidade exata de produtos, padrões são ajustados por limitações de espaço ou outras particularidades do cotidiano. Pensando nisso, o OptiTask foi desenvolvido para se adaptar à realidade do dia a dia, oferecendo flexibilidade e agilidade para gerenciar o que realmente importa: manter o estoque organizado, mesmo em cenários desafiadores.</p>
+                    
+                    <p>Com o OptiTask, o controle de tarefas e posições é mais simples e eficiente do que nunca!</p>
             </div>
 
             <div class="instructions-section">
@@ -73,7 +92,7 @@
                 <ul class="feature-list">
                     <li><i class="fas fa-chart-pie"></i> Dashboard com métricas em tempo real</li>
                     <li><i class="fas fa-warehouse"></i> Gerenciamento de Posições de Estoque</li>
-                    <li><i class="fas fa-box"></i> Controle de SKUs</li>
+                    <li><i class="fas fa-box"></i> Controle de Posições X SKUs</li>
                     <li><i class="fas fa-list-ul"></i> Lista de Tarefas Pendentes</li>
                     <li><i class="fas fa-clipboard-check"></i> Conferência de Estoque</li>
                 </ul>
@@ -83,9 +102,9 @@
                 <h2>Como Usar o Dashboard</h2>
                 <p>O Dashboard fornece uma visão geral do seu sistema logístico:</p>
                 <ul class="feature-list">
-                    <li><i class="fas fa-th"></i> Total de Posições: Número total de posições de estoque</li>
+                    <li><i class="fas fa-th"></i> Total de Posições Cadastradas: Número total de posições de estoque</li>
                     <li><i class="fas fa-box"></i> Total de SKUs: Quantidade de produtos diferentes</li>
-                    <li><i class="fas fa-warehouse"></i> Posições Ocupadas: Espaços de estoque em uso</li>
+                    <li><i class="fas fa-warehouse"></i> Posições Ocupadas e Vagas: Espaços de estoque em uso</li>
                     <li><i class="fas fa-list-ul"></i> Tarefas Pendentes: Atividades que precisam ser realizadas</li>
                 </ul>
             </div>
@@ -99,12 +118,13 @@
                     <li><i class="fas fa-cog"></i> Configurações: Ajustes do sistema</li>
                     <li><i class="fas fa-clipboard-check"></i> Conferência: Realizar conferências de estoque</li>
                     <li><i class="fas fa-list-ul"></i> TodoList: Gerenciar tarefas pendentes</li>
+                    <li><i class="fas fa-download"></i> Utilize um arquivo Json modelo para facilitar o entendimento da OptiTask.</li>
                 </ul>
             </div>
 
             <div class="instructions-section">
                 <h2>Sobre o Desenvolvedor</h2>
-                <p>OptiTask foi desenvolvido por Dieter Heiss, um profissional especializado em soluções tecnológicas para logística. Com mais de uma década de experiência no setor, Dieter criou esta ferramenta para simplificar e otimizar processos logísticos.</p>
+                <p>OptiTask foi desenvolvido por Dieter Heiss, um profissional especializado em soluções tecnológicas que trabalhou no setor de logística. Dieter criou esta ferramenta visando simplificar e otimizar seu próprio dia a dia com processos logísticos mais eficientes e "desburocráticos".</p>
                 <p>Contato: <a href="https://weboss.com.br" target="_blank">weboss.com.br</a></p>
             </div>
         </div>

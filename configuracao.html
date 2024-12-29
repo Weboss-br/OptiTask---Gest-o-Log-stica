@@ -14,11 +14,21 @@
             <ul class="nav-links">
                 <li><a href="index.html">Dashboard</a></li>
                 <li><a href="cadastroPosicoes.html">Posições</a></li>
-                <li><a href="configuracao.html" class="active">Configurações</a></li>
                 <li><a href="conferencia.html">Conferência</a></li>
                 <li><a href="todolist.html">TodoList</a></li>
-                <li><a href="instrucoes.html">Instruções</a></li>
+                <li><a href="configuracao.html" class="active">Configurações</a></li>
             </ul>
+            <div class="nav-icons">
+                <button id="exportData" title="Exportar Dados">
+                    <i class="fas fa-download"></i>
+                </button>
+                <button id="importData" title="Importar Dados">
+                    <i class="fas fa-upload"></i>
+                </button>
+                <button id="usageInstructions" title="Instruções de Uso" onclick="window.location.href='instrucoes.html'">
+                    <i class="fas fa-question-circle"></i>
+                </button>
+            </div>
         </div>
     </nav>
 
@@ -35,67 +45,127 @@
         </div>
 
         <div class="tab-content" id="cidades">
-            <h2>Cidades</h2>
+            <h2>Cadastro de Cidades</h2>
             <form id="cityForm" class="config-form">
-                <div class="form-group">
-                    <label for="cityCode">Código da Cidade</label>
-                    <input type="text" id="cityCode" required>
-                </div>
-                <div class="form-group">
-                    <label for="cityDescription">Descrição</label>
-                    <input type="text" id="cityDescription" required>
+                <div class="form-grid">
+                    <div class="form-column">
+                        <div class="form-group">
+                            <label for="cityCode">Código da Cidade</label>
+                            <input type="text" id="cityCode" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="cityDescription">Descrição da Cidade</label>
+                            <input type="text" id="cityDescription">
+                        </div>
+                    </div>
                 </div>
                 <button type="submit" class="btn-primary">Adicionar Cidade</button>
             </form>
-            <ul id="cityList" class="config-list"></ul>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Descrição</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cityList"></tbody>
+                </table>
+            </div>
         </div>
 
         <div class="tab-content" id="modulos" style="display:none;">
-            <h2>Módulos</h2>
+            <h2>Cadastro de Módulos</h2>
             <form id="moduleForm" class="config-form">
-                <div class="form-group">
-                    <label for="moduleCode">Código do Módulo</label>
-                    <input type="text" id="moduleCode" required>
-                </div>
-                <div class="form-group">
-                    <label for="moduleDescription">Descrição</label>
-                    <input type="text" id="moduleDescription" required>
+                <div class="form-grid">
+                    <div class="form-column">
+                        <div class="form-group">
+                            <label for="moduleCode">Código do Módulo</label>
+                            <input type="text" id="moduleCode" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="moduleDescription">Descrição do Módulo</label>
+                            <input type="text" id="moduleDescription">
+                        </div>
+                    </div>
                 </div>
                 <button type="submit" class="btn-primary">Adicionar Módulo</button>
             </form>
-            <ul id="moduleList" class="config-list"></ul>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Descrição</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="moduleList"></tbody>
+                </table>
+            </div>
         </div>
 
         <div class="tab-content" id="niveis" style="display:none;">
-            <h2>Níveis</h2>
+            <h2>Cadastro de Níveis</h2>
             <form id="levelForm" class="config-form">
-                <div class="form-group">
-                    <label for="levelCode">Código do Nível</label>
-                    <input type="text" id="levelCode" required>
-                </div>
-                <div class="form-group">
-                    <label for="levelDescription">Descrição</label>
-                    <input type="text" id="levelDescription" required>
+                <div class="form-grid">
+                    <div class="form-column">
+                        <div class="form-group">
+                            <label for="levelCode">Código do Nível</label>
+                            <input type="text" id="levelCode" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="levelDescription">Descrição do Nível</label>
+                            <input type="text" id="levelDescription">
+                        </div>
+                    </div>
                 </div>
                 <button type="submit" class="btn-primary">Adicionar Nível</button>
             </form>
-            <ul id="levelList" class="config-list"></ul>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Descrição</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="levelList"></tbody>
+                </table>
+            </div>
         </div>
 
         <div class="tab-content" id="colunas" style="display:none;">
-            <h2>Colunas</h2>
+            <h2>Cadastro de Colunas</h2>
             <form id="columnForm" class="config-form">
-                <div class="form-group">
-                    <label for="columnCode">Código da Coluna</label>
-                    <input type="text" id="columnCode" required>
-                </div>
-                <div class="form-group">
-                    <label for="columnDescription">Descrição</label>
-                    <input type="text" id="columnDescription" required>
+                <div class="form-grid">
+                    <div class="form-column">
+                        <div class="form-group">
+                            <label for="columnCode">Código da Coluna</label>
+                            <input type="text" id="columnCode" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="columnDescription">Descrição da Coluna</label>
+                            <input type="text" id="columnDescription">
+                        </div>
+                    </div>
                 </div>
                 <button type="submit" class="btn-primary">Adicionar Coluna</button>
             </form>
-            <ul id="columnList" class="config-list"></ul>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Descrição</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="columnList"></tbody>
+                </table>
+            </div>
         </div>
 
         <div class="tab-content" id="categorias" style="display:none;">
@@ -115,16 +185,18 @@
                 </div>
                 <button type="submit" class="btn-primary">Adicionar Categoria</button>
             </form>
-            <table id="categoryTable">
-                <thead>
-                    <tr>
-                        <th>Código</th>
-                        <th>Descrição</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody id="categoryList"></tbody>
-            </table>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Descrição</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="categoryList"></tbody>
+                </table>
+            </div>
         </div>
 
         <div class="tab-content" id="sku" style="display:none;">
@@ -133,51 +205,29 @@
                 <div class="form-grid">
                     <div class="form-column">
                         <div class="form-group">
-                            <label for="skuCode">Código SKU *</label>
+                            <label for="skuCode">Código do SKU</label>
                             <input type="text" id="skuCode" required>
                         </div>
                         <div class="form-group">
-                            <label for="skuDescription">Descrição do Produto</label>
+                            <label for="skuDescription">Descrição do SKU</label>
                             <input type="text" id="skuDescription">
-                        </div>
-                        <div class="form-group">
-                            <label for="skuCategory">Categoria</label>
-                            <select id="skuCategory">
-                                <option value="">Selecione a Categoria</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-column">
-                        <div class="form-group">
-                            <label for="skuWeight">Peso (kg)</label>
-                            <input type="number" id="skuWeight" step="0.01" min="0">
-                        </div>
-                        <div class="form-group">
-                            <label for="skuDimensions">Dimensões (C x L x A em cm)</label>
-                            <input type="text" id="skuDimensions" placeholder="Ex: 50x30x20">
-                        </div>
-                        <div class="form-group">
-                            <label for="skuPalletCapacity">Capacidade por Pallet</label>
-                            <input type="number" id="skuPalletCapacity" min="1">
                         </div>
                     </div>
                 </div>
                 <button type="submit" class="btn-primary">Adicionar SKU</button>
             </form>
-            <table id="skuTable">
-                <thead>
-                    <tr>
-                        <th>Código SKU</th>
-                        <th>Descrição</th>
-                        <th>Categoria</th>
-                        <th>Peso (kg)</th>
-                        <th>Dimensões</th>
-                        <th>Capacidade/Pallet</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody id="skuList"></tbody>
-            </table>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Descrição</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="skuList"></tbody>
+                </table>
+            </div>
         </div>
 
     </div>

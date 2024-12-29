@@ -92,39 +92,44 @@ class ConfigManager {
 
     // Renderizar lista de itens
     renderList() {
-        // Usar setTimeout para garantir que o DOM esteja totalmente carregado
-        setTimeout(() => {
-            const listElement = document.getElementById(this.listId);
+        console.log(`Renderizando lista ${this.listId} com ${this.items.length} itens`);
+        const listElement = document.getElementById(this.listId);
+        
+        if (listElement) {
+            listElement.innerHTML = '';
             
-            if (listElement) {
-                listElement.innerHTML = '';
-                this.items.forEach(item => {
-                    const li = document.createElement('li');
-                    li.innerHTML = `
-                        <span>${item.toString()}</span>
-                        <div class="item-actions">
-                            <button class="icon-action icon-edit" data-id="${item.id}" title="Editar">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="icon-action icon-delete" data-id="${item.id}" title="Excluir">
-                                <i class="fas fa-trash-alt"></i>
-                            </button>
-                        </div>
-                    `;
-                    
-                    // Adicionar event listeners para edição e exclusão
-                    const editBtn = li.querySelector('.icon-edit');
-                    const deleteBtn = li.querySelector('.icon-delete');
-                    
-                    editBtn.addEventListener('click', () => this.handleEditItem(item));
-                    deleteBtn.addEventListener('click', () => this.handleDeleteItem(item.id));
-                    
-                    listElement.appendChild(li);
-                });
-            } else {
-                console.error(`Elemento de lista não encontrado: ${this.listId}`);
+            if (this.items.length === 0) {
+                listElement.innerHTML = '<tr><td colspan="3" class="text-center">Nenhum item cadastrado</td></tr>';
+                return;
             }
-        }, 0);
+
+            this.items.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${item.code}</td>
+                    <td>${item.description}</td>
+                    <td class="actions">
+                        <button class="icon-action icon-edit" data-id="${item.id}" title="Editar">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="icon-action icon-delete" data-id="${item.id}" title="Excluir">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </td>
+                `;
+                
+                // Adicionar event listeners para edição e exclusão
+                const editBtn = tr.querySelector('.icon-edit');
+                const deleteBtn = tr.querySelector('.icon-delete');
+                
+                editBtn.addEventListener('click', () => this.handleEditItem(item));
+                deleteBtn.addEventListener('click', () => this.handleDeleteItem(item.id));
+                
+                listElement.appendChild(tr);
+            });
+        } else {
+            console.error(`Elemento de lista não encontrado: ${this.listId}`);
+        }
     }
 
     // Manipular edição de item
@@ -155,6 +160,8 @@ const cityManager = new ConfigManager('cities', 'cityList');
 const moduleManager = new ConfigManager('modules', 'moduleList');
 const columnManager = new ConfigManager('columns', 'columnList');
 const levelManager = new ConfigManager('levels', 'levelList');
+const categoryManager = new ConfigManager('categories', 'categoryList');
+const skuManager = new ConfigManager('skus', 'skuList');
 
 // Função para adicionar item e renderizar lista
 function addItemAndRender(manager, code, description) {
@@ -162,54 +169,114 @@ function addItemAndRender(manager, code, description) {
     manager.addItem(newItem);
 }
 
-// Event listeners para formulários
-document.getElementById('cityForm')?.addEventListener('submit', function(event) {
-    event.preventDefault();
-    const code = document.getElementById('cityCode').value;
-    const description = document.getElementById('cityDescription').value;
-    addItemAndRender(cityManager, code, description);
-    this.reset();
-});
-
-document.getElementById('moduleForm')?.addEventListener('submit', function(event) {
-    event.preventDefault();
-    const code = document.getElementById('moduleCode').value;
-    const description = document.getElementById('moduleDescription').value;
-    addItemAndRender(moduleManager, code, description);
-    this.reset();
-});
-
-document.getElementById('columnForm')?.addEventListener('submit', function(event) {
-    event.preventDefault();
-    const code = document.getElementById('columnCode').value;
-    const description = document.getElementById('columnDescription').value;
-    addItemAndRender(columnManager, code, description);
-    this.reset();
-});
-
-document.getElementById('levelForm')?.addEventListener('submit', function(event) {
-    event.preventDefault();
-    const code = document.getElementById('levelCode').value;
-    const description = document.getElementById('levelDescription').value;
-    addItemAndRender(levelManager, code, description);
-    this.reset();
-});
-
-// Renderizar listas após o carregamento completo do DOM
+// Renderizar todas as listas após o carregamento completo do DOM
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM completamente carregado');
+    
+    // Renderizar todas as listas ao carregar a página
     cityManager.renderList();
     moduleManager.renderList();
-    columnManager.renderList();
     levelManager.renderList();
+    columnManager.renderList();
+    categoryManager.renderList();
+    skuManager.renderList();
+
+    // Event listeners para formulários
+    document.getElementById('cityForm')?.addEventListener('submit', function(event) {
+        event.preventDefault();
+        const code = document.getElementById('cityCode').value;
+        const description = document.getElementById('cityDescription').value;
+        addItemAndRender(cityManager, code, description);
+        this.reset();
+    });
+
+    document.getElementById('moduleForm')?.addEventListener('submit', function(event) {
+        event.preventDefault();
+        const code = document.getElementById('moduleCode').value;
+        const description = document.getElementById('moduleDescription').value;
+        addItemAndRender(moduleManager, code, description);
+        this.reset();
+    });
+
+    document.getElementById('levelForm')?.addEventListener('submit', function(event) {
+        event.preventDefault();
+        const code = document.getElementById('levelCode').value;
+        const description = document.getElementById('levelDescription').value;
+        addItemAndRender(levelManager, code, description);
+        this.reset();
+    });
+
+    document.getElementById('columnForm')?.addEventListener('submit', function(event) {
+        event.preventDefault();
+        const code = document.getElementById('columnCode').value;
+        const description = document.getElementById('columnDescription').value;
+        addItemAndRender(columnManager, code, description);
+        this.reset();
+    });
+
+    document.getElementById('categoryForm')?.addEventListener('submit', function(event) {
+        event.preventDefault();
+        const code = document.getElementById('categoryCode').value;
+        const description = document.getElementById('categoryDescription').value;
+        addItemAndRender(categoryManager, code, description);
+        this.reset();
+    });
+
+    document.getElementById('skuForm')?.addEventListener('submit', function(event) {
+        event.preventDefault();
+        const code = document.getElementById('skuCode').value;
+        const description = document.getElementById('skuDescription').value;
+        addItemAndRender(skuManager, code, description);
+        this.reset();
+    });
+
+    // Event listeners para as abas
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const tabId = button.getAttribute('data-tab');
+            
+            // Remover classe active de todos os botões e conteúdos
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            tabContents.forEach(content => content.style.display = 'none');
+            
+            // Adicionar classe active ao botão clicado e mostrar conteúdo correspondente
+            button.classList.add('active');
+            document.getElementById(tabId).style.display = 'block';
+
+            // Renderizar a lista correspondente
+            switch(tabId) {
+                case 'cidades':
+                    cityManager.renderList();
+                    break;
+                case 'modulos':
+                    moduleManager.renderList();
+                    break;
+                case 'niveis':
+                    levelManager.renderList();
+                    break;
+                case 'colunas':
+                    columnManager.renderList();
+                    break;
+                case 'categorias':
+                    categoryManager.renderList();
+                    break;
+                case 'sku':
+                    skuManager.renderList();
+                    break;
+            }
+        });
+    });
 });
 
 // Funções de exportação e importação de dados
 function exportData() {
-    const exportData = {
+    const data = {
         cidades: cityManager.items.map(item => ({
             codigo: item.code,
-            nome: item.description
+            descricao: item.description
         })),
         modulos: moduleManager.items.map(item => ({
             codigo: item.code,
@@ -222,84 +289,103 @@ function exportData() {
         colunas: columnManager.items.map(item => ({
             codigo: item.code,
             descricao: item.description
+        })),
+        categorias: categoryManager.items.map(item => ({
+            codigo: item.code,
+            descricao: item.description
+        })),
+        skus: skuManager.items.map(item => ({
+            codigo: item.code,
+            descricao: item.description
         }))
     };
 
-    const dataStr = JSON.stringify(exportData, null, 2);
-    const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
-    
-    const exportFileDefaultName = 'optitask_config_export.json';
-    
-    const linkElement = document.createElement('a');
-    linkElement.setAttribute('href', dataUri);
-    linkElement.setAttribute('download', exportFileDefaultName);
-    linkElement.click();
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'configuracoes.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
 }
 
 function importData(event) {
     const file = event.target.files[0];
-    if (!file) return;
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const importedData = JSON.parse(e.target.result);
 
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        try {
-            const importedData = JSON.parse(e.target.result);
+                // Limpar dados existentes
+                localStorage.removeItem('cities');
+                localStorage.removeItem('modules');
+                localStorage.removeItem('levels');
+                localStorage.removeItem('columns');
+                localStorage.removeItem('categories');
+                localStorage.removeItem('skus');
 
-            // Limpar dados existentes
-            localStorage.removeItem('cities');
-            localStorage.removeItem('modules');
-            localStorage.removeItem('levels');
-            localStorage.removeItem('columns');
+                // Importar cidades
+                if (importedData.cidades) {
+                    importedData.cidades.forEach(city => {
+                        cityManager.addItem(new ConfigurableItem(city.codigo, city.descricao));
+                    });
+                }
 
-            // Importar cidades
-            if (importedData.cidades) {
-                importedData.cidades.forEach(city => {
-                    cityManager.addItem(new ConfigurableItem(city.codigo, city.nome));
-                });
+                // Importar módulos
+                if (importedData.modulos) {
+                    importedData.modulos.forEach(module => {
+                        moduleManager.addItem(new ConfigurableItem(module.codigo, module.descricao));
+                    });
+                }
+
+                // Importar níveis
+                if (importedData.niveis) {
+                    importedData.niveis.forEach(level => {
+                        levelManager.addItem(new ConfigurableItem(level.codigo, level.descricao));
+                    });
+                }
+
+                // Importar colunas
+                if (importedData.colunas) {
+                    importedData.colunas.forEach(column => {
+                        columnManager.addItem(new ConfigurableItem(column.codigo, column.descricao));
+                    });
+                }
+
+                // Importar categorias
+                if (importedData.categorias) {
+                    importedData.categorias.forEach(category => {
+                        categoryManager.addItem(new ConfigurableItem(category.codigo, category.descricao));
+                    });
+                }
+
+                // Importar SKUs
+                if (importedData.skus) {
+                    importedData.skus.forEach(sku => {
+                        skuManager.addItem(new ConfigurableItem(sku.codigo, sku.descricao));
+                    });
+                }
+
+                // Renderizar listas
+                cityManager.renderList();
+                moduleManager.renderList();
+                levelManager.renderList();
+                columnManager.renderList();
+                categoryManager.renderList();
+                skuManager.renderList();
+
+                alert('Dados importados com sucesso!');
+            } catch (error) {
+                console.error('Erro ao importar dados:', error);
+                alert('Erro ao importar dados. Verifique se o arquivo está no formato correto.');
             }
-
-            // Importar módulos
-            if (importedData.modulos) {
-                importedData.modulos.forEach(module => {
-                    moduleManager.addItem(new ConfigurableItem(module.codigo, module.descricao));
-                });
-            }
-
-            // Importar níveis
-            if (importedData.niveis) {
-                importedData.niveis.forEach(level => {
-                    levelManager.addItem(new ConfigurableItem(level.codigo, level.descricao));
-                });
-            }
-
-            // Importar colunas
-            if (importedData.colunas) {
-                importedData.colunas.forEach(column => {
-                    columnManager.addItem(new ConfigurableItem(column.codigo, column.descricao));
-                });
-            }
-
-            // Renderizar listas
-            cityManager.renderList();
-            moduleManager.renderList();
-            levelManager.renderList();
-            columnManager.renderList();
-
-            alert('Dados importados com sucesso!');
-        } catch (error) {
-            console.error('Erro ao importar dados:', error);
-            alert('Erro ao importar dados. Verifique o formato do arquivo.');
-        }
-    };
-    reader.readAsText(file);
+        };
+        reader.readAsText(file);
+    }
 }
-
-// Adicionar event listeners para exportação e importação
-document.getElementById('exportDataBtn')?.addEventListener('click', exportData);
-document.getElementById('importDataBtn')?.addEventListener('click', () => {
-    document.getElementById('importFileInput').click();
-});
-document.getElementById('importFileInput')?.addEventListener('change', importData);
 
 // Lógica de gerenciamento de Categorias
 document.addEventListener('DOMContentLoaded', () => {
@@ -565,7 +651,7 @@ document.addEventListener('DOMContentLoaded', () => {
     tabButtons.forEach(button => {
         button.addEventListener('click', () => {
             const tabId = button.getAttribute('data-tab');
-
+            
             // Remover classe active de todos os botões
             tabButtons.forEach(btn => btn.classList.remove('active'));
             button.classList.add('active');
@@ -580,3 +666,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
+// Adicionar event listeners para exportação e importação
+document.getElementById('exportDataBtn')?.addEventListener('click', exportData);
+document.getElementById('importDataBtn')?.addEventListener('click', () => {
+    document.getElementById('importFileInput').click();
+});
+document.getElementById('importFileInput')?.addEventListener('change', importData);

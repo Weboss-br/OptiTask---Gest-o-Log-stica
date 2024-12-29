@@ -3,6 +3,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const pulmaoPositionsList = document.getElementById('pulmaoPositionsList');
     const generateTodoListBtn = document.getElementById('generateTodoListBtn');
 
+    // Função para salvar posições no localStorage
+    function savePositionsToLocalStorage(positions) {
+        console.log('Salvando posições no localStorage:', positions);
+        localStorage.setItem('positions', JSON.stringify(positions));
+        
+        // Disparar evento de storage para atualizar outros documentos
+        window.dispatchEvent(new Event('storage'));
+    }
+
     // Função para renderizar tabela de Posições
     function renderPositionsTable() {
         // Log para depuração
@@ -26,22 +35,10 @@ document.addEventListener('DOMContentLoaded', () => {
             pickingPositionsList.appendChild(row);
         } else {
             pickingPositions.forEach((position, index) => {
-                // Criar lista de SKUs para dropdown
-                const skuOptions = skus.map(s => 
-                    `<option value="${s.code}" ${s.code === position.skuCode ? 'selected' : ''}>
-                        ${s.code} - ${s.description}
-                    </option>`
-                ).join('');
-
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${position.positionId || 'Não definido'}</td>
-                    <td>
-                        <select class="sku-select" data-index="${index}" data-type="picking">
-                            <option value="">Selecione um SKU</option>
-                            ${skuOptions}
-                        </select>
-                    </td>
+                    <td>${position.id}</td>
+                    <td>${position.skuCode || ''}</td>
                     <td>${position.totalCapacity || 'Não definido'}</td>
                     <td>${position.occupiedPositions || 0}</td>
                     <td>
@@ -60,22 +57,10 @@ document.addEventListener('DOMContentLoaded', () => {
             pulmaoPositionsList.appendChild(row);
         } else {
             pulmaoPositions.forEach((position, index) => {
-                // Criar lista de SKUs para dropdown
-                const skuOptions = skus.map(s => 
-                    `<option value="${s.code}" ${s.code === position.skuCode ? 'selected' : ''}>
-                        ${s.code} - ${s.description}
-                    </option>`
-                ).join('');
-
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${position.positionId || 'Não definido'}</td>
-                    <td>
-                        <select class="sku-select" data-index="${index}" data-type="pulmao">
-                            <option value="">Selecione um SKU</option>
-                            ${skuOptions}
-                        </select>
-                    </td>
+                    <td>${position.id}</td>
+                    <td>${position.skuCode || ''}</td>
                     <td>${position.totalCapacity || 'Não definido'}</td>
                     <td>${position.occupiedPositions || 0}</td>
                     <td>
@@ -86,21 +71,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 pulmaoPositionsList.appendChild(row);
             });
         }
-
-        // Adicionar event listener para seleção de SKU
-        document.querySelectorAll('.sku-select').forEach(select => {
-            select.addEventListener('change', (e) => {
-                const index = e.target.getAttribute('data-index');
-                const type = e.target.getAttribute('data-type');
-                const selectedSkuCode = e.target.value;
-                
-                const positions = JSON.parse(localStorage.getItem('positions') || '[]');
-                const filteredPositions = positions.filter(p => p.type === type);
-                filteredPositions[index].skuCode = selectedSkuCode;
-                
-                localStorage.setItem('positions', JSON.stringify(positions));
-            });
-        });
     }
 
     // Função para editar Posição
@@ -115,18 +85,13 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.classList.add('modal');
         modal.innerHTML = `
             <div class="modal-content">
-                <h2>Editar Posição ${position.positionId}</h2>
+                <h2>Editar Posição ${position.id}</h2>
                 <form id="editPositionForm">
                     <div class="form-group">
                         <label for="editSkuCode">SKU</label>
-                        <select id="editSkuCode">
-                            <option value="">Selecione um SKU</option>
-                            ${skus.map(sku => `
-                                <option value="${sku.code}" ${sku.code === position.skuCode ? 'selected' : ''}>
-                                    ${sku.code} - ${sku.description}
-                                </option>
-                            `).join('')}
-                        </select>
+                        <input type="text" id="editSkuCode" 
+                               value="${position.skuCode || ''}" 
+                               placeholder="Digite o código SKU">
                     </div>
                     <div class="form-group">
                         <label for="editOccupiedPositions">Posições Ocupadas</label>
@@ -152,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Atualizar posição
             const positions = JSON.parse(localStorage.getItem('positions') || '[]');
             const positionIndex = positions.findIndex(p => 
-                p.type === type && p.positionId === position.positionId
+                p.type === type && p.id === position.id
             );
 
             if (positionIndex !== -1) {
@@ -163,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 };
 
                 // Salvar no localStorage
-                localStorage.setItem('positions', JSON.stringify(positions));
+                savePositionsToLocalStorage(positions);
 
                 // Renderizar tabela atualizada
                 renderPositionsTable();
@@ -188,9 +153,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const filteredPositions = positions.filter(p => p.type === type);
         const position = filteredPositions[index];
 
-        if (confirm(`Deseja confirmar a posição ${position.positionId}?`)) {
+        if (confirm(`Deseja confirmar a posição ${position.id}?`)) {
             // Lógica de confirmação (pode ser expandida no futuro)
-            alert(`Posição ${position.positionId} confirmada com sucesso!`);
+            alert(`Posição ${position.id} confirmada com sucesso!`);
         }
     }
 
@@ -202,21 +167,21 @@ document.addEventListener('DOMContentLoaded', () => {
             // Criar algumas posições de exemplo
             const initialPositions = [
                 { 
-                    positionId: 'A1', 
+                    id: 'A1', 
                     type: 'picking',
                     skuCode: null, 
                     totalCapacity: 10, 
                     occupiedPositions: 0 
                 },
                 { 
-                    positionId: 'A2', 
+                    id: 'A2', 
                     type: 'picking',
                     skuCode: null, 
                     totalCapacity: 15, 
                     occupiedPositions: 0 
                 },
                 { 
-                    positionId: 'B1', 
+                    id: 'B1', 
                     type: 'pulmao',
                     skuCode: null, 
                     totalCapacity: 20, 
@@ -224,7 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             ];
 
-            localStorage.setItem('positions', JSON.stringify(initialPositions));
+            savePositionsToLocalStorage(initialPositions);
             console.log('Posições iniciais criadas:', initialPositions);
         } else {
             console.log('Posições já existentes:', existingPositions);
@@ -278,8 +243,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         const task = {
                             id: `task_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
                             type: 'transfer',
-                            fromPosition: pulmaoPos.positionId,
-                            toPosition: pickingPos.positionId,
+                            fromPosition: pulmaoPos.id,
+                            toPosition: pickingPos.id,
                             skuCode: pickingPos.skuCode,
                             skuDescription: skuInfo ? skuInfo.description : 'SKU não encontrado',
                             palletsToTransfer: palletsToTransfer,

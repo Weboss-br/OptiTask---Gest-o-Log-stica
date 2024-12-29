@@ -2,6 +2,9 @@
 const ActivityTracker = {
     // Método para adicionar uma nova atividade
     addActivity: function(description, type = 'sistema') {
+        // Log de depuração
+        console.log('Adicionando atividade:', { description, type });
+
         // Recuperar lista de atividades atual
         const activities = JSON.parse(localStorage.getItem('activities') || '[]');
         
@@ -22,6 +25,9 @@ const ActivityTracker = {
         // Salvar de volta no localStorage
         localStorage.setItem('activities', JSON.stringify(limitedActivities));
 
+        // Log de depuração
+        console.log('Atividades atualizadas:', limitedActivities);
+
         // Disparar evento para atualizar dashboard em tempo real
         window.dispatchEvent(new CustomEvent('activityAdded', { 
             detail: newActivity 
@@ -31,11 +37,19 @@ const ActivityTracker = {
     // Método para recuperar atividades
     getActivities: function(limit = 10) {
         const activities = JSON.parse(localStorage.getItem('activities') || '[]');
-        return activities.slice(-limit).reverse();
+        const limitedActivities = activities.slice(-limit).reverse();
+        
+        // Log de depuração
+        console.log('Recuperando atividades:', limitedActivities);
+        
+        return limitedActivities;
     },
 
     // Método para limpar atividades
     clearActivities: function() {
+        // Log de depuração
+        console.log('Limpando todas as atividades');
+        
         localStorage.removeItem('activities');
     },
 

@@ -4,20 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - OptiTask</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <nav class="main-navigation">
         <div class="nav-container">
-            <div class="logo">OptiTask</div>
+            <div class="logo"><a href="index.html">OptiTask</a></div>
             <ul class="nav-links">
                 <li><a href="index.html" class="active">Dashboard</a></li>
                 <li><a href="cadastroPosicoes.html">Posições</a></li>
-                <li><a href="configuracao.html">Configurações</a></li>
                 <li><a href="conferencia.html">Conferência</a></li>
                 <li><a href="todolist.html">TodoList</a></li>
+                <li><a href="configuracao.html">Configurações</a></li>
             </ul>
+            <div class="nav-icons">
+                <button id="exportData" title="Exportar Dados">
+                    <i class="fas fa-download"></i>
+                </button>
+                <button id="importData" title="Importar Dados">
+                    <i class="fas fa-upload"></i>
+                </button>
+                <button id="usageInstructions" title="Instruções de Uso" onclick="window.location.href='instrucoes.html'">
+                    <i class="fas fa-question-circle"></i>
+                </button>
+            </div>
         </div>
     </nav>
 
@@ -27,56 +38,96 @@
             <p>Visão geral do seu sistema de gerenciamento logístico</p>
             
             <div class="hero-actions">
-                <button class="btn-export" title="Exportar Dados">
-                    <i class="fas fa-download"></i> Exportar
-                </button>
-                <button class="btn-import" title="Importar Dados">
-                    <i class="fas fa-upload"></i> Importar
-                </button>
+
                 <a href="instrucoes.html" class="btn-instructions">
                     <i class="fas fa-book"></i> Instruções de Uso
+                </a>
+                <a href="novidades.html" class="btn-instructions">
+                    <i class="fas fa-star"></i> Novidades
                 </a>
             </div>
         </div>
 
         <section class="metrics-grid">
-            <div class="metric-card total-positions">
-                <div class="metric-icon">
-                    <i class="fas fa-th"></i>
+            <div class="metric-container">
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-th"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3>Total de Posições</h3>
+                        <span id="totalPositions" class="metric-value">1</span>
+                    </div>
                 </div>
-                <div class="metric-content">
-                    <h3>Total de Posições</h3>
-                    <span id="totalPositions" class="metric-value">1</span>
-                </div>
-            </div>
 
-            <div class="metric-card total-skus">
-                <div class="metric-icon">
-                    <i class="fas fa-box"></i>
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3>Total de SKUs</h3>
+                        <span id="totalSkus" class="metric-value">0</span>
+                    </div>
                 </div>
-                <div class="metric-content">
-                    <h3>Total de SKUs</h3>
-                    <span id="totalSkus" class="metric-value">0</span>
-                </div>
-            </div>
 
-            <div class="metric-card occupied-positions">
-                <div class="metric-icon">
-                    <i class="fas fa-warehouse"></i>
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-warehouse"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3>Posições Ocupadas</h3>
+                        <span id="occupiedPositions" class="metric-value">0</span>
+                    </div>
                 </div>
-                <div class="metric-content">
-                    <h3>Posições Ocupadas</h3>
-                    <span id="occupiedPositions" class="metric-value">0</span>
-                </div>
-            </div>
 
-            <div class="metric-card pending-tasks">
-                <div class="metric-icon">
-                    <i class="fas fa-list-ul"></i>
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-list-ul"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3>Tarefas Pendentes</h3>
+                        <span id="pendingTasks" class="metric-value">0</span>
+                    </div>
                 </div>
-                <div class="metric-content">
-                    <h3>Tarefas Pendentes</h3>
-                    <span id="pendingTasks" class="metric-value">0</span>
+
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-pallet"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3>Total de Pallets</h3>
+                        <span id="totalPallets" class="metric-value">0</span>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-door-open"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3>Posições Vazias</h3>
+                        <span id="emptyPositions" class="metric-value">0</span>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-archive"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3>Posições Vazias Pulmão</h3>
+                        <span id="emptyPulmaoPositions" class="metric-value">0</span>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-cubes"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3>Posições Vazias Picking</h3>
+                        <span id="emptyPickingPositions" class="metric-value">0</span>
+                    </div>
                 </div>
             </div>
         </section>
@@ -102,7 +153,12 @@
         </section>
 
         <section class="recent-activities">
-            <h2>Atividades Recentes</h2>
+            <div class="activities-header">
+                <h2>Atividades Recentes</h2>
+                <button id="clearActivities" title="Limpar Atividades">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
             <ul id="recentActivitiesList" class="activities-list">
                 <li class="no-activities">Nenhuma atividade recente</li>
             </ul>

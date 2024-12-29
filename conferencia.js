@@ -89,9 +89,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 <form id="editPositionForm">
                     <div class="form-group">
                         <label for="editSkuCode">SKU</label>
-                        <input type="text" id="editSkuCode" 
-                               value="${position.skuCode || ''}" 
-                               placeholder="Digite o código SKU">
+                        <select id="editSkuCode" required>
+                            <option value="">Selecione um SKU</option>
+                            ${skus.map(sku => `
+                                <option value="${sku.code}" ${sku.code === position.skuCode ? 'selected' : ''}>
+                                    ${sku.code} - ${sku.description}
+                                </option>
+                            `).join('')}
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="editOccupiedPositions">Posições Ocupadas</label>

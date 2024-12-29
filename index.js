@@ -437,7 +437,7 @@ window.addEventListener('storage', updatePendingTasks);
 // Função para renderizar atividades recentes
 function updateRecentActivities() {
     // Recuperar lista de atividades
-    const activities = ActivityTracker.getActivities(10);
+    const activities = ActivityTracker.getActivities(5); // Limitar para 5 atividades
     const recentActivitiesList = document.getElementById('recentActivitiesList');
     
     // Limpar lista anterior

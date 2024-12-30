@@ -147,6 +147,104 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Função para exportar dados
+    function exportData() {
+        // Coletar todos os dados importantes do localStorage
+        const dataToExport = {
+            positions: JSON.parse(localStorage.getItem('positions') || '[]'),
+            skus: JSON.parse(localStorage.getItem('skus') || '[]'),
+            tasks: JSON.parse(localStorage.getItem('todoList') || '[]'),
+            // Adicionar dados de configuração
+            cidades: JSON.parse(localStorage.getItem('cities') || '[]'),
+            modulos: JSON.parse(localStorage.getItem('modules') || '[]'),
+            niveis: JSON.parse(localStorage.getItem('levels') || '[]'),
+            colunas: JSON.parse(localStorage.getItem('columns') || '[]'),
+            categorias: JSON.parse(localStorage.getItem('categories') || '[]')
+        };
+
+        // Criar blob com os dados
+        const blob = new Blob([JSON.stringify(dataToExport, null, 2)], { type: 'application/json' });
+        
+        // Criar link de download
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `optitask_export_${new Date().toISOString().replace(/:/g, '-')}.json`;
+        
+        // Disparar download
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    // Função para importar dados
+    function importData() {
+        // Criar input para arquivo
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.json';
+        
+        input.onchange = (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const importedData = JSON.parse(e.target.result);
+                        
+                        console.log('Dados importados:', importedData);
+                        
+                        // Validar estrutura dos dados
+                        if (importedData.positions && importedData.skus && importedData.tasks) {
+                            // Atualizar localStorage com dados importados
+                            localStorage.setItem('positions', JSON.stringify(importedData.positions));
+                            localStorage.setItem('skus', JSON.stringify(importedData.skus));
+                            localStorage.setItem('todoList', JSON.stringify(importedData.tasks));
+                            
+                            // Importar dados de configuração
+                            localStorage.setItem('cities', JSON.stringify(importedData.cidades || []));
+                            localStorage.setItem('modules', JSON.stringify(importedData.modulos || []));
+                            localStorage.setItem('levels', JSON.stringify(importedData.niveis || []));
+                            localStorage.setItem('columns', JSON.stringify(importedData.colunas || []));
+                            localStorage.setItem('categories', JSON.stringify(importedData.categorias || []));
+                            
+                            console.log('Dados salvos no localStorage');
+                            
+                            // Adicionar log de atividade
+                            ActivityTracker.addActivity('Dados importados com sucesso', ActivityTracker.types.SISTEMA);
+                            
+                            // Recarregar página para refletir mudanças
+                            window.location.reload();
+                        } else {
+                            console.error('Estrutura de dados inválida:', importedData);
+                            alert('Formato de arquivo inválido. Verifique o console para mais detalhes.');
+                        }
+                    } catch (error) {
+                        console.error('Erro ao importar arquivo:', error);
+                        alert('Erro ao importar arquivo: ' + error.message);
+                    }
+                };
+                reader.readAsText(file);
+            }
+        };
+        
+        // Disparar seleção de arquivo
+        input.click();
+    }
+
+    // Adicionar event listeners para exportação e importação
+    const exportButton = document.getElementById('exportData');
+    const importButton = document.getElementById('importData');
+    
+    if (exportButton) {
+        exportButton.addEventListener('click', exportData);
+    }
+    
+    if (importButton) {
+        importButton.addEventListener('click', importData);
+    }
+
     // Renderizar lista ao carregar a página
     renderTodoList();
 });

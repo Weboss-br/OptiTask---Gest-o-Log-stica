@@ -223,7 +223,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const dataToExport = {
             positions: JSON.parse(localStorage.getItem('positions') || '[]'),
             skus: JSON.parse(localStorage.getItem('skus') || '[]'),
-            tasks: JSON.parse(localStorage.getItem('todoList') || '[]')
+            tasks: JSON.parse(localStorage.getItem('todoList') || '[]'),
+            // Adicionar dados de configuração
+            cidades: JSON.parse(localStorage.getItem('cities') || '[]'),
+            modulos: JSON.parse(localStorage.getItem('modules') || '[]'),
+            niveis: JSON.parse(localStorage.getItem('levels') || '[]'),
+            colunas: JSON.parse(localStorage.getItem('columns') || '[]'),
+            categorias: JSON.parse(localStorage.getItem('categories') || '[]')
         };
 
         // Criar blob com os dados

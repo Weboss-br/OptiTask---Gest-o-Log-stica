@@ -213,7 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (skuForm) {
         skuForm.addEventListener('submit', function(event) {
             event.preventDefault();
-            console.log('📝 Formulário de SKU submetido');
+            console.log(' Formulário de SKU submetido');
 
             const code = document.getElementById('skuCode').value.trim();
             const description = document.getElementById('skuDescription').value.trim();
@@ -222,7 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const dimensions = document.getElementById('skuDimensions').value.trim();
             const palletCapacity = document.getElementById('skuPalletCapacity').value.trim();
 
-            console.log('📋 Valores recuperados:', {
+            console.log(' Valores recuperados:', {
                 code,
                 description,
                 category,
@@ -246,10 +246,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 palletCapacity: palletCapacity ? parseInt(palletCapacity) : null
             };
 
-            console.log('🆕 Novo SKU criado:', newSku);
+            console.log(' Novo SKU criado:', newSku);
 
             const skus = JSON.parse(localStorage.getItem('skus') || '[]');
-            console.log('📦 SKUs existentes antes da adição:', skus);
+            console.log(' SKUs existentes antes da adição:', skus);
 
             const existingSkuIndex = skus.findIndex(s => s.code === code);
             if (existingSkuIndex !== -1) {
@@ -259,7 +259,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             localStorage.setItem('skus', JSON.stringify(skus));
-            console.log('💾 SKUs após adição:', JSON.parse(localStorage.getItem('skus') || '[]'));
+            console.log(' SKUs após adição:', JSON.parse(localStorage.getItem('skus') || '[]'));
 
             renderSkuTable();
             skuForm.reset();
@@ -311,119 +311,88 @@ tabButtons.forEach(button => {
 
 // Funções de exportação e importação de dados
 function exportData() {
-    const data = {
-        cidades: cityManager.items.map(item => ({
-            codigo: item.code,
-            descricao: item.description
-        })),
-        modulos: moduleManager.items.map(item => ({
-            codigo: item.code,
-            descricao: item.description
-        })),
-        niveis: levelManager.items.map(item => ({
-            codigo: item.code,
-            descricao: item.description
-        })),
-        colunas: columnManager.items.map(item => ({
-            codigo: item.code,
-            descricao: item.description
-        })),
-        categorias: categoryManager.items.map(item => ({
-            codigo: item.code,
-            descricao: item.description
-        })),
-        skus: skuManager.items.map(item => ({
-            codigo: item.code,
-            descricao: item.description
-        }))
+    const dataToExport = {
+        positions: JSON.parse(localStorage.getItem('positions') || '[]'),
+        skus: JSON.parse(localStorage.getItem('skus') || '[]'),
+        tasks: JSON.parse(localStorage.getItem('todoList') || '[]'),
+        cidades: JSON.parse(localStorage.getItem('cities') || '[]'),
+        modulos: JSON.parse(localStorage.getItem('modules') || '[]'),
+        niveis: JSON.parse(localStorage.getItem('levels') || '[]'),
+        colunas: JSON.parse(localStorage.getItem('columns') || '[]'),
+        categorias: JSON.parse(localStorage.getItem('categories') || '[]')
     };
 
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const blob = new Blob([JSON.stringify(dataToExport, null, 2)], { type: 'application/json' });
+    
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'configuracoes.json';
+    a.download = `optitask_export_${new Date().toISOString().replace(/:/g, '-')}.json`;
+    
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 }
 
-function importData(event) {
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            try {
-                const importedData = JSON.parse(e.target.result);
-
-                // Limpar dados existentes
-                localStorage.removeItem('cities');
-                localStorage.removeItem('modules');
-                localStorage.removeItem('levels');
-                localStorage.removeItem('columns');
-                localStorage.removeItem('categories');
-                localStorage.removeItem('skus');
-
-                // Importar cidades
-                if (importedData.cidades) {
-                    importedData.cidades.forEach(city => {
-                        cityManager.addItem(new ConfigurableItem(city.codigo, city.descricao));
-                    });
+function importData() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    
+    input.onchange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    
+                    console.log('Dados importados:', importedData);
+                    
+                    if (importedData.positions && importedData.skus && importedData.tasks) {
+                        localStorage.setItem('positions', JSON.stringify(importedData.positions));
+                        localStorage.setItem('skus', JSON.stringify(importedData.skus));
+                        localStorage.setItem('todoList', JSON.stringify(importedData.tasks));
+                        
+                        localStorage.setItem('cities', JSON.stringify(importedData.cidades || []));
+                        localStorage.setItem('modules', JSON.stringify(importedData.modulos || []));
+                        localStorage.setItem('levels', JSON.stringify(importedData.niveis || []));
+                        localStorage.setItem('columns', JSON.stringify(importedData.colunas || []));
+                        localStorage.setItem('categories', JSON.stringify(importedData.categorias || []));
+                        
+                        console.log('Dados salvos no localStorage');
+                        
+                        window.location.reload();
+                    } else {
+                        console.error('Estrutura de dados inválida:', importedData);
+                        alert('Formato de arquivo inválido. Verifique o console para mais detalhes.');
+                    }
+                } catch (error) {
+                    console.error('Erro ao importar arquivo:', error);
+                    alert('Erro ao importar arquivo: ' + error.message);
                 }
-
-                // Importar módulos
-                if (importedData.modulos) {
-                    importedData.modulos.forEach(module => {
-                        moduleManager.addItem(new ConfigurableItem(module.codigo, module.descricao));
-                    });
-                }
-
-                // Importar níveis
-                if (importedData.niveis) {
-                    importedData.niveis.forEach(level => {
-                        levelManager.addItem(new ConfigurableItem(level.codigo, level.descricao));
-                    });
-                }
-
-                // Importar colunas
-                if (importedData.colunas) {
-                    importedData.colunas.forEach(column => {
-                        columnManager.addItem(new ConfigurableItem(column.codigo, column.descricao));
-                    });
-                }
-
-                // Importar categorias
-                if (importedData.categorias) {
-                    importedData.categorias.forEach(category => {
-                        categoryManager.addItem(new ConfigurableItem(category.codigo, category.descricao));
-                    });
-                }
-
-                // Importar SKUs
-                if (importedData.skus) {
-                    importedData.skus.forEach(sku => {
-                        skuManager.addItem(new ConfigurableItem(sku.codigo, sku.descricao));
-                    });
-                }
-
-                // Renderizar listas
-                cityManager.renderList();
-                moduleManager.renderList();
-                levelManager.renderList();
-                columnManager.renderList();
-                categoryManager.renderList();
-                skuManager.renderList();
-
-                alert('Dados importados com sucesso!');
-            } catch (error) {
-                console.error('Erro ao importar dados:', error);
-                alert('Erro ao importar dados. Verifique se o arquivo está no formato correto.');
-            }
-        };
-        reader.readAsText(file);
-    }
+            };
+            reader.readAsText(file);
+        }
+    };
+    
+    input.click();
 }
+
+// Adicionar event listeners para exportação e importação
+document.addEventListener('DOMContentLoaded', () => {
+    const exportButton = document.getElementById('exportData');
+    const importButton = document.getElementById('importData');
+    
+    if (exportButton) {
+        exportButton.addEventListener('click', exportData);
+    }
+    
+    if (importButton) {
+        importButton.addEventListener('click', importData);
+    }
+});
 
 // Lógica de gerenciamento de Categorias
 document.addEventListener('DOMContentLoaded', () => {
@@ -566,7 +535,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Função para adicionar SKU
     function addSku(event) {
-        console.log('🚀 Iniciando addSku()');
+        console.log(' Iniciando addSku()');
         
         // Recuperar valores dos campos
         const code = document.getElementById('skuCode').value;
@@ -576,7 +545,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const dimensions = document.getElementById('skuDimensions').value;
         const palletCapacity = document.getElementById('skuPalletCapacity').value;
 
-        console.log('📋 Valores recuperados:', {
+        console.log(' Valores recuperados:', {
             code,
             description,
             category,
@@ -587,7 +556,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Validar campos obrigatórios
         if (!code || !description) {
-            console.error('❌ Código e Descrição são obrigatórios');
+            console.error(' Código e Descrição são obrigatórios');
             alert('Código e Descrição são obrigatórios');
             return;
         }
@@ -603,17 +572,17 @@ document.addEventListener('DOMContentLoaded', () => {
             palletCapacity: palletCapacity ? parseInt(palletCapacity) : null
         };
 
-        console.log('🆕 Novo SKU criado:', newSku);
+        console.log(' Novo SKU criado:', newSku);
 
         // Adicionar SKU à lista
         const skus = JSON.parse(localStorage.getItem('skus') || '[]');
-        console.log('📦 SKUs existentes antes da adição:', skus);
+        console.log(' SKUs existentes antes da adição:', skus);
 
         // Verificar se já existe um SKU com o mesmo código
         const existingSkuIndex = skus.findIndex(s => s.code === code);
         
         if (existingSkuIndex !== -1) {
-            console.warn(`⚠️ SKU com código ${code} já existe. Substituindo.`);
+            console.warn(` SKU com código ${code} já existe. Substituindo.`);
             skus[existingSkuIndex] = newSku;
         } else {
             skus.push(newSku);
@@ -621,7 +590,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         localStorage.setItem('skus', JSON.stringify(skus));
 
-        console.log('💾 SKUs após adição:', JSON.parse(localStorage.getItem('skus') || '[]'));
+        console.log(' SKUs após adição:', JSON.parse(localStorage.getItem('skus') || '[]'));
 
         // Renderizar tabela atualizada
         renderSkuTable();
@@ -632,23 +601,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Função para renderizar tabela de SKUs
     function renderSkuTable() {
-        console.log('🔍 Iniciando renderSkuTable()');
+        console.log(' Iniciando renderSkuTable()');
         
         const skus = JSON.parse(localStorage.getItem('skus') || '[]');
 
-        console.log('📋 SKUs para renderizar:', skus);
+        console.log(' SKUs para renderizar:', skus);
 
         // Limpar tabela anterior
         skuList.innerHTML = '';
 
         if (skus.length === 0) {
-            console.log('🚫 Nenhum SKU cadastrado');
+            console.log(' Nenhum SKU cadastrado');
             skuList.innerHTML = '<tr><td colspan="7" class="text-center">Nenhum SKU cadastrado</td></tr>';
             return;
         }
 
         skus.forEach((sku, index) => {
-            console.log(`🔢 Renderizando SKU ${index + 1}:`, sku);
+            console.log(` Renderizando SKU ${index + 1}:`, sku);
             
             const tr = document.createElement('tr');
             tr.innerHTML = `
@@ -670,7 +639,7 @@ document.addEventListener('DOMContentLoaded', () => {
             skuList.appendChild(tr);
         });
 
-        console.log('✅ Tabela de SKUs renderizada');
+        console.log(' Tabela de SKUs renderizada');
     }
 
     // Função para editar SKU
@@ -769,18 +738,18 @@ document.addEventListener('DOMContentLoaded', () => {
     if (exportButton) {
         exportButton.addEventListener('click', exportData);
     } else {
-        console.error('❌ Botão de exportação não encontrado!');
+        console.error(' Botão de exportação não encontrado!');
     }
 
     if (importButton && importInput) {
         importButton.addEventListener('click', () => importInput.click());
         importInput.addEventListener('change', importData);
     } else {
-        console.error('❌ Botão ou input de importação não encontrado!');
+        console.error(' Botão ou input de importação não encontrado!');
     }
 
     function exportData() {
-        console.log('📤 Exportando dados...');
+        console.log(' Exportando dados...');
         const data = {
             cidades: cityManager.items,
             modulos: moduleManager.items,
@@ -798,18 +767,18 @@ document.addEventListener('DOMContentLoaded', () => {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-        console.log('✅ Dados exportados com sucesso!');
+        console.log(' Dados exportados com sucesso!');
     }
 
     function importData(event) {
-        console.log('📥 Importando dados...');
+        console.log(' Importando dados...');
         const file = event.target.files[0];
         if (file) {
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
                     const importedData = JSON.parse(e.target.result);
-                    console.log('📊 Dados importados:', importedData);
+                    console.log(' Dados importados:', importedData);
                     // Atualizar localStorage com os dados importados
                     localStorage.setItem('cities', JSON.stringify(importedData.cidades || []));
                     localStorage.setItem('modules', JSON.stringify(importedData.modulos || []));
@@ -824,9 +793,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     columnManager.renderList();
                     categoryManager.renderList();
                     skuManager.renderList();
-                    console.log('✅ Dados importados e atualizados com sucesso!');
+                    console.log(' Dados importados e atualizados com sucesso!');
                 } catch (error) {
-                    console.error('❌ Erro ao importar dados:', error);
+                    console.error(' Erro ao importar dados:', error);
                 }
             };
             reader.readAsText(file);
@@ -836,30 +805,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Função para renderizar tabela de SKUs
 function renderSkuTable() {
-    console.log('🔍 Iniciando renderSkuTable()');
+    console.log(' Iniciando renderSkuTable()');
     
     const skuList = document.getElementById('skuList');
     
     if (!skuList) {
-        console.error('❌ Elemento skuList não encontrado!');
+        console.error(' Elemento skuList não encontrado!');
         return;
     }
 
     const skus = JSON.parse(localStorage.getItem('skus') || '[]');
 
-    console.log('📋 SKUs para renderizar:', skus);
+    console.log(' SKUs para renderizar:', skus);
 
     // Limpar tabela anterior
     skuList.innerHTML = '';
 
     if (skus.length === 0) {
-        console.log('🚫 Nenhum SKU cadastrado');
+        console.log(' Nenhum SKU cadastrado');
         skuList.innerHTML = '<tr><td colspan="7" class="text-center">Nenhum SKU cadastrado</td></tr>';
         return;
     }
 
     skus.forEach((sku, index) => {
-        console.log(`🔢 Renderizando SKU ${index + 1}:`, sku);
+        console.log(` Renderizando SKU ${index + 1}:`, sku);
         
         const tr = document.createElement('tr');
         tr.innerHTML = `
@@ -881,14 +850,14 @@ function renderSkuTable() {
         skuList.appendChild(tr);
     });
 
-    console.log('✅ Tabela de SKUs renderizada');
+    console.log(' Tabela de SKUs renderizada');
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     const skuForm = document.getElementById('skuForm');
     
     if (!skuForm) {
-        console.error('❌ Formulário de SKU não encontrado!');
+        console.error(' Formulário de SKU não encontrado!');
         return;
     }
 
@@ -900,7 +869,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function handleSkuSubmit(event) {
         event.preventDefault();
-        console.log('📝 Formulário de SKU submetido');
+        console.log(' Formulário de SKU submetido');
 
         // Recuperar valores dos campos
         const code = document.getElementById('skuCode').value.trim();
@@ -910,7 +879,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const dimensions = document.getElementById('skuDimensions').value.trim();
         const palletCapacity = document.getElementById('skuPalletCapacity').value.trim();
 
-        console.log('📋 Valores recuperados:', {
+        console.log(' Valores recuperados:', {
             code,
             description,
             category,
@@ -921,7 +890,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Validar campos obrigatórios
         if (!code || !description) {
-            console.error('❌ Código e Descrição são obrigatórios');
+            console.error(' Código e Descrição são obrigatórios');
             alert('Código e Descrição são obrigatórios');
             return;
         }
@@ -937,17 +906,17 @@ document.addEventListener('DOMContentLoaded', () => {
             palletCapacity: palletCapacity ? parseInt(palletCapacity) : null
         };
 
-        console.log('🆕 Novo SKU criado:', newSku);
+        console.log(' Novo SKU criado:', newSku);
 
         // Adicionar SKU à lista
         const skus = JSON.parse(localStorage.getItem('skus') || '[]');
-        console.log('📦 SKUs existentes antes da adição:', skus);
+        console.log(' SKUs existentes antes da adição:', skus);
 
         // Verificar se já existe um SKU com o mesmo código
         const existingSkuIndex = skus.findIndex(s => s.code === code);
         
         if (existingSkuIndex !== -1) {
-            console.warn(`⚠️ SKU com código ${code} já existe. Substituindo.`);
+            console.warn(` SKU com código ${code} já existe. Substituindo.`);
             skus[existingSkuIndex] = newSku;
         } else {
             skus.push(newSku);
@@ -955,7 +924,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         localStorage.setItem('skus', JSON.stringify(skus));
 
-        console.log('💾 SKUs após adição:', JSON.parse(localStorage.getItem('skus') || '[]'));
+        console.log(' SKUs após adição:', JSON.parse(localStorage.getItem('skus') || '[]'));
 
         // Renderizar tabela atualizada
         renderSkuTable();
@@ -971,30 +940,30 @@ document.addEventListener('DOMContentLoaded', () => {
     skuForm.setAttribute('data-submit-handler', handlerName);
 
     function renderSkuTable() {
-        console.log('🔍 Iniciando renderSkuTable()');
+        console.log(' Iniciando renderSkuTable()');
         
         const skuList = document.getElementById('skuList');
         
         if (!skuList) {
-            console.error('❌ Elemento skuList não encontrado!');
+            console.error(' Elemento skuList não encontrado!');
             return;
         }
 
         const skus = JSON.parse(localStorage.getItem('skus') || '[]');
 
-        console.log('📋 SKUs para renderizar:', skus);
+        console.log(' SKUs para renderizar:', skus);
 
         // Limpar tabela anterior
         skuList.innerHTML = '';
 
         if (skus.length === 0) {
-            console.log('🚫 Nenhum SKU cadastrado');
+            console.log(' Nenhum SKU cadastrado');
             skuList.innerHTML = '<tr><td colspan="7" class="text-center">Nenhum SKU cadastrado</td></tr>';
             return;
         }
 
         skus.forEach((sku, index) => {
-            console.log(`🔢 Renderizando SKU ${index + 1}:`, sku);
+            console.log(` Renderizando SKU ${index + 1}:`, sku);
             
             const tr = document.createElement('tr');
             tr.innerHTML = `
@@ -1016,7 +985,7 @@ document.addEventListener('DOMContentLoaded', () => {
             skuList.appendChild(tr);
         });
 
-        console.log('✅ Tabela de SKUs renderizada');
+        console.log(' Tabela de SKUs renderizada');
     }
 
     // Renderizar tabela de SKUs ao carregar a página

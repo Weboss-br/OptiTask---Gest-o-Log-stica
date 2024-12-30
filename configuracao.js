@@ -181,93 +181,131 @@ document.addEventListener('DOMContentLoaded', () => {
     categoryManager.renderList();
     skuManager.renderList();
 
-    // Event listeners para formulários
-    document.getElementById('cityForm')?.addEventListener('submit', function(event) {
-        event.preventDefault();
-        const code = document.getElementById('cityCode').value;
-        const description = document.getElementById('cityDescription').value;
-        addItemAndRender(cityManager, code, description);
-        this.reset();
+    const forms = [
+        { id: 'cityForm', manager: cityManager },
+        { id: 'moduleForm', manager: moduleManager },
+        { id: 'levelForm', manager: levelManager },
+        { id: 'columnForm', manager: columnManager },
+        { id: 'categoryForm', manager: categoryManager }
+    ];
+
+    forms.forEach(({ id, manager }) => {
+        const form = document.getElementById(id);
+        if (form) {
+            form.addEventListener('submit', function(event) {
+                event.preventDefault();
+                const code = this.querySelector('[id$="Code"]').value.trim();
+                const description = this.querySelector('[id$="Description"]').value.trim();
+
+                if (!code || !description) {
+                    alert('Código e Descrição são obrigatórios');
+                    return;
+                }
+
+                manager.addItem(new ConfigurableItem(code, description));
+                manager.renderList();
+                this.reset();
+            });
+        }
     });
 
-    document.getElementById('moduleForm')?.addEventListener('submit', function(event) {
-        event.preventDefault();
-        const code = document.getElementById('moduleCode').value;
-        const description = document.getElementById('moduleDescription').value;
-        addItemAndRender(moduleManager, code, description);
-        this.reset();
-    });
+    const skuForm = document.getElementById('skuForm');
+    if (skuForm) {
+        skuForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            console.log('📝 Formulário de SKU submetido');
 
-    document.getElementById('levelForm')?.addEventListener('submit', function(event) {
-        event.preventDefault();
-        const code = document.getElementById('levelCode').value;
-        const description = document.getElementById('levelDescription').value;
-        addItemAndRender(levelManager, code, description);
-        this.reset();
-    });
+            const code = document.getElementById('skuCode').value.trim();
+            const description = document.getElementById('skuDescription').value.trim();
+            const category = document.getElementById('skuCategory').value.trim();
+            const weight = document.getElementById('skuWeight').value.trim();
+            const dimensions = document.getElementById('skuDimensions').value.trim();
+            const palletCapacity = document.getElementById('skuPalletCapacity').value.trim();
 
-    document.getElementById('columnForm')?.addEventListener('submit', function(event) {
-        event.preventDefault();
-        const code = document.getElementById('columnCode').value;
-        const description = document.getElementById('columnDescription').value;
-        addItemAndRender(columnManager, code, description);
-        this.reset();
-    });
+            console.log('📋 Valores recuperados:', {
+                code,
+                description,
+                category,
+                weight,
+                dimensions,
+                palletCapacity
+            });
 
-    document.getElementById('categoryForm')?.addEventListener('submit', function(event) {
-        event.preventDefault();
-        const code = document.getElementById('categoryCode').value;
-        const description = document.getElementById('categoryDescription').value;
-        addItemAndRender(categoryManager, code, description);
-        this.reset();
-    });
-
-    document.getElementById('skuForm')?.addEventListener('submit', function(event) {
-        event.preventDefault();
-        const code = document.getElementById('skuCode').value;
-        const description = document.getElementById('skuDescription').value;
-        addItemAndRender(skuManager, code, description);
-        this.reset();
-    });
-
-    // Event listeners para as abas
-    const tabButtons = document.querySelectorAll('.tab-btn');
-    const tabContents = document.querySelectorAll('.tab-content');
-
-    tabButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            const tabId = button.getAttribute('data-tab');
-            
-            // Remover classe active de todos os botões e conteúdos
-            tabButtons.forEach(btn => btn.classList.remove('active'));
-            tabContents.forEach(content => content.style.display = 'none');
-            
-            // Adicionar classe active ao botão clicado e mostrar conteúdo correspondente
-            button.classList.add('active');
-            document.getElementById(tabId).style.display = 'block';
-
-            // Renderizar a lista correspondente
-            switch(tabId) {
-                case 'cidades':
-                    cityManager.renderList();
-                    break;
-                case 'modulos':
-                    moduleManager.renderList();
-                    break;
-                case 'niveis':
-                    levelManager.renderList();
-                    break;
-                case 'colunas':
-                    columnManager.renderList();
-                    break;
-                case 'categorias':
-                    categoryManager.renderList();
-                    break;
-                case 'sku':
-                    skuManager.renderList();
-                    break;
+            if (!code || !description) {
+                alert('Código e Descrição são obrigatórios');
+                return;
             }
+
+            const newSku = {
+                id: `sku_${Date.now()}`,
+                code: code,
+                description: description,
+                category: category || null,
+                weight: weight ? parseFloat(weight) : null,
+                dimensions: dimensions || null,
+                palletCapacity: palletCapacity ? parseInt(palletCapacity) : null
+            };
+
+            console.log('🆕 Novo SKU criado:', newSku);
+
+            const skus = JSON.parse(localStorage.getItem('skus') || '[]');
+            console.log('📦 SKUs existentes antes da adição:', skus);
+
+            const existingSkuIndex = skus.findIndex(s => s.code === code);
+            if (existingSkuIndex !== -1) {
+                skus[existingSkuIndex] = newSku;
+            } else {
+                skus.push(newSku);
+            }
+
+            localStorage.setItem('skus', JSON.stringify(skus));
+            console.log('💾 SKUs após adição:', JSON.parse(localStorage.getItem('skus') || '[]'));
+
+            renderSkuTable();
+            skuForm.reset();
         });
+    }
+
+    renderSkuTable();
+});
+
+// Event listeners para as abas
+const tabButtons = document.querySelectorAll('.tab-btn');
+const tabContents = document.querySelectorAll('.tab-content');
+
+tabButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        const tabId = button.getAttribute('data-tab');
+        
+        // Remover classe active de todos os botões e conteúdos
+        tabButtons.forEach(btn => btn.classList.remove('active'));
+        tabContents.forEach(content => content.style.display = 'none');
+        
+        // Adicionar classe active ao botão clicado e mostrar conteúdo correspondente
+        button.classList.add('active');
+        document.getElementById(tabId).style.display = 'block';
+
+        // Renderizar a lista correspondente
+        switch(tabId) {
+            case 'cidades':
+                cityManager.renderList();
+                break;
+            case 'modulos':
+                moduleManager.renderList();
+                break;
+            case 'niveis':
+                levelManager.renderList();
+                break;
+            case 'colunas':
+                columnManager.renderList();
+                break;
+            case 'categorias':
+                categoryManager.renderList();
+                break;
+            case 'sku':
+                skuManager.renderList();
+                break;
+        }
     });
 });
 
@@ -486,10 +524,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Função para excluir Categoria
     window.deleteCategory = function(index) {
-        const categories = JSON.parse(localStorage.getItem('categories') || '[]');
-        
-        // Confirmar exclusão
         if (confirm('Tem certeza que deseja excluir esta Categoria?')) {
+            const categories = JSON.parse(localStorage.getItem('categories') || '[]');
             categories.splice(index, 1);
             localStorage.setItem('categories', JSON.stringify(categories));
             renderCategoryTable();
@@ -506,7 +542,7 @@ document.addEventListener('DOMContentLoaded', () => {
     populateCategorySelect();
 });
 
-// Adicionar lógica de gerenciamento de SKUs com localStorage
+// Lógica de gerenciamento de SKUs com localStorage
 document.addEventListener('DOMContentLoaded', () => {
     const skuForm = document.getElementById('skuForm');
     const skuList = document.getElementById('skuList');
@@ -530,80 +566,111 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Função para adicionar SKU
     function addSku(event) {
-        event.preventDefault();
-
-        // Capturar valores dos campos
-        const skuCode = document.getElementById('skuCode').value;
-        const skuDescription = document.getElementById('skuDescription').value || '';
-        const skuCategory = document.getElementById('skuCategory').value;
-        const skuWeight = document.getElementById('skuWeight').value;
-        const skuDimensions = document.getElementById('skuDimensions').value;
-        const skuPalletCapacity = document.getElementById('skuPalletCapacity').value;
-
-        // Criar objeto de SKU
-        const sku = {
-            code: skuCode,
-            description: skuDescription,
-            category: skuCategory,
-            weight: parseFloat(skuWeight) || null,
-            dimensions: skuDimensions,
-            palletCapacity: parseInt(skuPalletCapacity) || null
-        };
-
-        // Recuperar SKUs existentes
-        let skus = JSON.parse(localStorage.getItem('skus') || '[]');
-
-        // Verificar se já existe um SKU com o mesmo código
-        const existingSkuIndex = skus.findIndex(s => s.code === skuCode);
+        console.log('🚀 Iniciando addSku()');
         
-        if (existingSkuIndex !== -1) {
-            // Atualizar SKU existente
-            skus[existingSkuIndex] = sku;
-            alert('SKU atualizado com sucesso!');
-        } else {
-            // Adicionar novo SKU
-            skus.push(sku);
-            alert('SKU cadastrado com sucesso!');
+        // Recuperar valores dos campos
+        const code = document.getElementById('skuCode').value;
+        const description = document.getElementById('skuDescription').value;
+        const category = document.getElementById('skuCategory').value;
+        const weight = document.getElementById('skuWeight').value;
+        const dimensions = document.getElementById('skuDimensions').value;
+        const palletCapacity = document.getElementById('skuPalletCapacity').value;
+
+        console.log('📋 Valores recuperados:', {
+            code,
+            description,
+            category,
+            weight,
+            dimensions,
+            palletCapacity
+        });
+
+        // Validar campos obrigatórios
+        if (!code || !description) {
+            console.error('❌ Código e Descrição são obrigatórios');
+            alert('Código e Descrição são obrigatórios');
+            return;
         }
 
-        // Salvar no localStorage
+        // Criar objeto SKU com todos os campos
+        const newSku = {
+            id: `sku_${Date.now()}`,
+            code: code,
+            description: description,
+            category: category,
+            weight: weight ? parseFloat(weight) : null,
+            dimensions: dimensions || null,
+            palletCapacity: palletCapacity ? parseInt(palletCapacity) : null
+        };
+
+        console.log('🆕 Novo SKU criado:', newSku);
+
+        // Adicionar SKU à lista
+        const skus = JSON.parse(localStorage.getItem('skus') || '[]');
+        console.log('📦 SKUs existentes antes da adição:', skus);
+
+        // Verificar se já existe um SKU com o mesmo código
+        const existingSkuIndex = skus.findIndex(s => s.code === code);
+        
+        if (existingSkuIndex !== -1) {
+            console.warn(`⚠️ SKU com código ${code} já existe. Substituindo.`);
+            skus[existingSkuIndex] = newSku;
+        } else {
+            skus.push(newSku);
+        }
+
         localStorage.setItem('skus', JSON.stringify(skus));
 
-        // Renderizar lista de SKUs
+        console.log('💾 SKUs após adição:', JSON.parse(localStorage.getItem('skus') || '[]'));
+
+        // Renderizar tabela atualizada
         renderSkuTable();
 
         // Limpar formulário
-        skuForm.reset();
+        document.getElementById('skuForm').reset();
     }
 
     // Função para renderizar tabela de SKUs
     function renderSkuTable() {
-        const skus = JSON.parse(localStorage.getItem('skus') || '[]');
-        const categories = JSON.parse(localStorage.getItem('categories') || '[]');
+        console.log('🔍 Iniciando renderSkuTable()');
         
-        // Limpar tabela existente
+        const skus = JSON.parse(localStorage.getItem('skus') || '[]');
+
+        console.log('📋 SKUs para renderizar:', skus);
+
+        // Limpar tabela anterior
         skuList.innerHTML = '';
 
-        // Adicionar linhas à tabela
-        skus.forEach((sku, index) => {
-            // Encontrar descrição da categoria
-            const categoryDescription = categories.find(c => c.code === sku.category)?.description || sku.category;
+        if (skus.length === 0) {
+            console.log('🚫 Nenhum SKU cadastrado');
+            skuList.innerHTML = '<tr><td colspan="7" class="text-center">Nenhum SKU cadastrado</td></tr>';
+            return;
+        }
 
-            const row = document.createElement('tr');
-            row.innerHTML = `
+        skus.forEach((sku, index) => {
+            console.log(`🔢 Renderizando SKU ${index + 1}:`, sku);
+            
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
                 <td>${sku.code}</td>
                 <td>${sku.description}</td>
-                <td>${sku.category} - ${categoryDescription}</td>
-                <td>${sku.weight || '-'}</td>
-                <td>${sku.dimensions || '-'}</td>
-                <td>${sku.palletCapacity || '-'}</td>
-                <td>
-                    <button onclick="editSku(${index})">Editar</button>
-                    <button onclick="deleteSku(${index})">Excluir</button>
+                <td>${sku.category}</td>
+                <td>${sku.weight ? sku.weight.toFixed(2) : 'N/A'}</td>
+                <td>${sku.dimensions || 'N/A'}</td>
+                <td>${sku.palletCapacity || 'N/A'}</td>
+                <td class="actions">
+                    <button class="icon-action icon-edit" onclick="editSku(${index})" title="Editar">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="icon-action icon-delete" onclick="deleteSku(${index})" title="Excluir">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
                 </td>
             `;
-            skuList.appendChild(row);
+            skuList.appendChild(tr);
         });
+
+        console.log('✅ Tabela de SKUs renderizada');
     }
 
     // Função para editar SKU
@@ -611,25 +678,29 @@ document.addEventListener('DOMContentLoaded', () => {
         const skus = JSON.parse(localStorage.getItem('skus') || '[]');
         const sku = skus[index];
 
-        // Preencher formulário com dados do SKU
+        // Preencher formulário com dados atuais
         document.getElementById('skuCode').value = sku.code;
         document.getElementById('skuDescription').value = sku.description;
-        document.getElementById('skuCategory').value = sku.category;
-        document.getElementById('skuWeight').value = sku.weight;
-        document.getElementById('skuDimensions').value = sku.dimensions;
-        document.getElementById('skuPalletCapacity').value = sku.palletCapacity;
+        document.getElementById('skuCategory').value = sku.category || '';
+        document.getElementById('skuWeight').value = sku.weight || '';
+        document.getElementById('skuDimensions').value = sku.dimensions || '';
+        document.getElementById('skuPalletCapacity').value = sku.palletCapacity || '';
+        
+        // Remover item da lista para ser substituído
+        skus.splice(index, 1);
+        localStorage.setItem('skus', JSON.stringify(skus));
+
+        // Renderizar tabela atualizada
+        renderSkuTable();
     }
 
     // Função para excluir SKU
     window.deleteSku = function(index) {
-        const skus = JSON.parse(localStorage.getItem('skus') || '[]');
-        
-        // Confirmar exclusão
         if (confirm('Tem certeza que deseja excluir este SKU?')) {
+            const skus = JSON.parse(localStorage.getItem('skus') || '[]');
             skus.splice(index, 1);
             localStorage.setItem('skus', JSON.stringify(skus));
             renderSkuTable();
-            alert('SKU excluído com sucesso!');
         }
     }
 
@@ -643,7 +714,7 @@ document.addEventListener('DOMContentLoaded', () => {
     renderSkuTable();
 });
 
-// Adicionar lógica de tabs
+// Lógica de tabs
 document.addEventListener('DOMContentLoaded', () => {
     const tabButtons = document.querySelectorAll('.tab-btn');
     const tabContents = document.querySelectorAll('.tab-content');
@@ -663,13 +734,291 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Mostrar conteúdo selecionado
             document.getElementById(tabId).style.display = 'block';
+
+            // Renderizar a lista correspondente
+            switch(tabId) {
+                case 'cidades':
+                    cityManager.renderList();
+                    break;
+                case 'modulos':
+                    moduleManager.renderList();
+                    break;
+                case 'niveis':
+                    levelManager.renderList();
+                    break;
+                case 'colunas':
+                    columnManager.renderList();
+                    break;
+                case 'categorias':
+                    categoryManager.renderList();
+                    break;
+                case 'sku':
+                    skuManager.renderList();
+                    break;
+            }
         });
     });
 });
 
-// Adicionar event listeners para exportação e importação
-document.getElementById('exportDataBtn')?.addEventListener('click', exportData);
-document.getElementById('importDataBtn')?.addEventListener('click', () => {
-    document.getElementById('importFileInput').click();
+// Event listeners para exportação e importação
+document.addEventListener('DOMContentLoaded', () => {
+    const exportButton = document.getElementById('exportData');
+    const importButton = document.getElementById('importData');
+    const importInput = document.getElementById('importFileInput');
+
+    if (exportButton) {
+        exportButton.addEventListener('click', exportData);
+    } else {
+        console.error('❌ Botão de exportação não encontrado!');
+    }
+
+    if (importButton && importInput) {
+        importButton.addEventListener('click', () => importInput.click());
+        importInput.addEventListener('change', importData);
+    } else {
+        console.error('❌ Botão ou input de importação não encontrado!');
+    }
+
+    function exportData() {
+        console.log('📤 Exportando dados...');
+        const data = {
+            cidades: cityManager.items,
+            modulos: moduleManager.items,
+            niveis: levelManager.items,
+            colunas: columnManager.items,
+            categorias: categoryManager.items,
+            skus: skuManager.items
+        };
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'configuracoes.json';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        console.log('✅ Dados exportados com sucesso!');
+    }
+
+    function importData(event) {
+        console.log('📥 Importando dados...');
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    console.log('📊 Dados importados:', importedData);
+                    // Atualizar localStorage com os dados importados
+                    localStorage.setItem('cities', JSON.stringify(importedData.cidades || []));
+                    localStorage.setItem('modules', JSON.stringify(importedData.modulos || []));
+                    localStorage.setItem('levels', JSON.stringify(importedData.niveis || []));
+                    localStorage.setItem('columns', JSON.stringify(importedData.colunas || []));
+                    localStorage.setItem('categories', JSON.stringify(importedData.categorias || []));
+                    localStorage.setItem('skus', JSON.stringify(importedData.skus || []));
+                    // Re-renderizar listas
+                    cityManager.renderList();
+                    moduleManager.renderList();
+                    levelManager.renderList();
+                    columnManager.renderList();
+                    categoryManager.renderList();
+                    skuManager.renderList();
+                    console.log('✅ Dados importados e atualizados com sucesso!');
+                } catch (error) {
+                    console.error('❌ Erro ao importar dados:', error);
+                }
+            };
+            reader.readAsText(file);
+        }
+    }
 });
-document.getElementById('importFileInput')?.addEventListener('change', importData);
+
+// Função para renderizar tabela de SKUs
+function renderSkuTable() {
+    console.log('🔍 Iniciando renderSkuTable()');
+    
+    const skuList = document.getElementById('skuList');
+    
+    if (!skuList) {
+        console.error('❌ Elemento skuList não encontrado!');
+        return;
+    }
+
+    const skus = JSON.parse(localStorage.getItem('skus') || '[]');
+
+    console.log('📋 SKUs para renderizar:', skus);
+
+    // Limpar tabela anterior
+    skuList.innerHTML = '';
+
+    if (skus.length === 0) {
+        console.log('🚫 Nenhum SKU cadastrado');
+        skuList.innerHTML = '<tr><td colspan="7" class="text-center">Nenhum SKU cadastrado</td></tr>';
+        return;
+    }
+
+    skus.forEach((sku, index) => {
+        console.log(`🔢 Renderizando SKU ${index + 1}:`, sku);
+        
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${sku.code}</td>
+            <td>${sku.description}</td>
+            <td>${sku.category || 'N/A'}</td>
+            <td>${sku.weight ? sku.weight.toFixed(2) : 'N/A'}</td>
+            <td>${sku.dimensions || 'N/A'}</td>
+            <td>${sku.palletCapacity || 'N/A'}</td>
+            <td class="actions">
+                <button class="icon-action icon-edit" onclick="editSku(${index})" title="Editar">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="icon-action icon-delete" onclick="deleteSku(${index})" title="Excluir">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+            </td>
+        `;
+        skuList.appendChild(tr);
+    });
+
+    console.log('✅ Tabela de SKUs renderizada');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const skuForm = document.getElementById('skuForm');
+    
+    if (!skuForm) {
+        console.error('❌ Formulário de SKU não encontrado!');
+        return;
+    }
+
+    // Remover todos os event listeners existentes
+    const oldSubmitHandler = skuForm.getAttribute('data-submit-handler');
+    if (oldSubmitHandler && window[oldSubmitHandler]) {
+        skuForm.removeEventListener('submit', window[oldSubmitHandler]);
+    }
+
+    function handleSkuSubmit(event) {
+        event.preventDefault();
+        console.log('📝 Formulário de SKU submetido');
+
+        // Recuperar valores dos campos
+        const code = document.getElementById('skuCode').value.trim();
+        const description = document.getElementById('skuDescription').value.trim();
+        const category = document.getElementById('skuCategory').value.trim();
+        const weight = document.getElementById('skuWeight').value.trim();
+        const dimensions = document.getElementById('skuDimensions').value.trim();
+        const palletCapacity = document.getElementById('skuPalletCapacity').value.trim();
+
+        console.log('📋 Valores recuperados:', {
+            code,
+            description,
+            category,
+            weight,
+            dimensions,
+            palletCapacity
+        });
+
+        // Validar campos obrigatórios
+        if (!code || !description) {
+            console.error('❌ Código e Descrição são obrigatórios');
+            alert('Código e Descrição são obrigatórios');
+            return;
+        }
+
+        // Criar objeto SKU com todos os campos
+        const newSku = {
+            id: `sku_${Date.now()}`,
+            code: code,
+            description: description,
+            category: category || null,
+            weight: weight ? parseFloat(weight) : null,
+            dimensions: dimensions || null,
+            palletCapacity: palletCapacity ? parseInt(palletCapacity) : null
+        };
+
+        console.log('🆕 Novo SKU criado:', newSku);
+
+        // Adicionar SKU à lista
+        const skus = JSON.parse(localStorage.getItem('skus') || '[]');
+        console.log('📦 SKUs existentes antes da adição:', skus);
+
+        // Verificar se já existe um SKU com o mesmo código
+        const existingSkuIndex = skus.findIndex(s => s.code === code);
+        
+        if (existingSkuIndex !== -1) {
+            console.warn(`⚠️ SKU com código ${code} já existe. Substituindo.`);
+            skus[existingSkuIndex] = newSku;
+        } else {
+            skus.push(newSku);
+        }
+
+        localStorage.setItem('skus', JSON.stringify(skus));
+
+        console.log('💾 SKUs após adição:', JSON.parse(localStorage.getItem('skus') || '[]'));
+
+        // Renderizar tabela atualizada
+        renderSkuTable();
+
+        // Limpar formulário
+        skuForm.reset();
+    }
+
+    // Adicionar novo event listener e armazenar referência
+    const handlerName = 'handleSkuSubmit_' + Date.now();
+    window[handlerName] = handleSkuSubmit;
+    skuForm.addEventListener('submit', handleSkuSubmit);
+    skuForm.setAttribute('data-submit-handler', handlerName);
+
+    function renderSkuTable() {
+        console.log('🔍 Iniciando renderSkuTable()');
+        
+        const skuList = document.getElementById('skuList');
+        
+        if (!skuList) {
+            console.error('❌ Elemento skuList não encontrado!');
+            return;
+        }
+
+        const skus = JSON.parse(localStorage.getItem('skus') || '[]');
+
+        console.log('📋 SKUs para renderizar:', skus);
+
+        // Limpar tabela anterior
+        skuList.innerHTML = '';
+
+        if (skus.length === 0) {
+            console.log('🚫 Nenhum SKU cadastrado');
+            skuList.innerHTML = '<tr><td colspan="7" class="text-center">Nenhum SKU cadastrado</td></tr>';
+            return;
+        }
+
+        skus.forEach((sku, index) => {
+            console.log(`🔢 Renderizando SKU ${index + 1}:`, sku);
+            
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${sku.code}</td>
+                <td>${sku.description}</td>
+                <td>${sku.category || 'N/A'}</td>
+                <td>${sku.weight ? sku.weight.toFixed(2) : 'N/A'}</td>
+                <td>${sku.dimensions || 'N/A'}</td>
+                <td>${sku.palletCapacity || 'N/A'}</td>
+                <td class="actions">
+                    <button class="icon-action icon-edit" onclick="editSku(${index})" title="Editar">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="icon-action icon-delete" onclick="deleteSku(${index})" title="Excluir">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </td>
+            `;
+            skuList.appendChild(tr);
+        });
+
+        console.log('✅ Tabela de SKUs renderizada');
+    }
+
+    // Renderizar tabela de SKUs ao carregar a página
+    renderSkuTable();
+});

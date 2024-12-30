@@ -28,6 +28,7 @@
                 <button id="usageInstructions" title="Instruções de Uso" onclick="window.location.href='instrucoes.html'">
                     <i class="fas fa-question-circle"></i>
                 </button>
+                <input type="file" id="importFileInput" style="display:none;" accept=".json">
             </div>
         </div>
     </nav>
@@ -205,12 +206,32 @@
                 <div class="form-grid">
                     <div class="form-column">
                         <div class="form-group">
-                            <label for="skuCode">Código do SKU</label>
+                            <label for="skuCode">Código SKU *</label>
                             <input type="text" id="skuCode" required>
                         </div>
                         <div class="form-group">
-                            <label for="skuDescription">Descrição do SKU</label>
+                            <label for="skuDescription">Descrição do Produto</label>
                             <input type="text" id="skuDescription">
+                        </div>
+                        <div class="form-group">
+                            <label for="skuCategory">Categoria</label>
+                            <select id="skuCategory">
+                                <option value="">Selecione a Categoria</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-column">
+                        <div class="form-group">
+                            <label for="skuWeight">Peso (kg)</label>
+                            <input type="number" id="skuWeight" step="0.01" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="skuDimensions">Dimensões (C x L x A em cm)</label>
+                            <input type="text" id="skuDimensions" placeholder="Ex: 50x30x20">
+                        </div>
+                        <div class="form-group">
+                            <label for="skuPalletCapacity">Capacidade por Pallet</label>
+                            <input type="number" id="skuPalletCapacity" min="1">
                         </div>
                     </div>
                 </div>
@@ -220,8 +241,12 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>Código</th>
+                            <th>Código SKU</th>
                             <th>Descrição</th>
+                            <th>Categoria</th>
+                            <th>Peso (kg)</th>
+                            <th>Dimensões</th>
+                            <th>Capacidade/Pallet</th>
                             <th>Ações</th>
                         </tr>
                     </thead>

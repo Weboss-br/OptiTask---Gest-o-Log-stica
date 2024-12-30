@@ -1,0 +1,144 @@
+{
+  "positions": [
+    {
+      "id": "01-M1-N2-C1",
+      "type": "pulmao",
+      "totalCapacity": 9,
+      "occupiedPositions": 9,
+      "availableSlots": 9,
+      "skuCode": "1001"
+    },
+    {
+      "id": "01-M2-N1-C1",
+      "type": "picking",
+      "totalCapacity": 4,
+      "occupiedPositions": 4,
+      "availableSlots": 4,
+      "skuCode": "1001"
+    },
+    {
+      "id": "01-M2-N2-C1",
+      "type": "pulmao",
+      "totalCapacity": 9,
+      "occupiedPositions": 9,
+      "availableSlots": 9,
+      "skuCode": "1002"
+    },
+    {
+      "id": "01-M1-N1-C1",
+      "type": "picking",
+      "totalCapacity": 4,
+      "occupiedPositions": 0,
+      "availableSlots": 4,
+      "skuCode": "1002"
+    }
+  ],
+  "skus": [
+    {
+      "id": "sku_1735557689836",
+      "code": "1001",
+      "description": "Vinil XPTO - 1,06m",
+      "category": "Vinil",
+      "weight": 50,
+      "dimensions": "50",
+      "palletCapacity": 60
+    },
+    {
+      "id": "sku_1735557720619",
+      "code": "1002",
+      "description": "Lonas Egípcias D+",
+      "category": "Lona",
+      "weight": 100,
+      "dimensions": "50",
+      "palletCapacity": 5
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task_1735357053298_cgzac5prx",
+      "type": "transfer",
+      "fromPosition": "01-M1-N2-C1",
+      "toPosition": "01-M1-N1-C1",
+      "skuCode": "1001",
+      "status": "completed"
+    },
+    {
+      "id": "task_1735357226435_s4wf44ve6",
+      "type": "transfer",
+      "fromPosition": "01-M1-N2-C1",
+      "toPosition": "01-M1-N1-C1",
+      "skuCode": "1001",
+      "status": "completed"
+    },
+    {
+      "id": "task_1735357536673_09ohqf007",
+      "type": "transfer",
+      "fromPosition": "01-M1-N2-C1",
+      "toPosition": "01-M1-N1-C1",
+      "skuCode": "1001",
+      "skuDescription": "Vinil XPTO",
+      "palletsToTransfer": 4,
+      "status": "completed"
+    },
+    {
+      "id": "task_1735491365421_au9qzjs12",
+      "type": "transfer",
+      "fromPosition": "01-M1-N2-C1",
+      "toPosition": "01-M1-N1-C1",
+      "skuCode": "1001",
+      "skuDescription": "Vinil XPTO",
+      "palletsToTransfer": 1,
+      "status": "completed"
+    },
+    {
+      "id": "task_1735491365421_o94szqou1",
+      "type": "transfer",
+      "fromPosition": "01-M2-N2-C1",
+      "toPosition": "01-M2-N1-C1",
+      "skuCode": "101",
+      "skuDescription": "Lonas Egípcias",
+      "palletsToTransfer": 3,
+      "status": "completed"
+    },
+    {
+      "id": "task_1735557998619_dfflyctnj",
+      "type": "transfer",
+      "fromPosition": "01-M1-N2-C1",
+      "toPosition": "01-M2-N1-C1",
+      "skuCode": "1001",
+      "skuDescription": "Vinil XPTO - 1,06m",
+      "palletsToTransfer": 3,
+      "status": "completed"
+    },
+    {
+      "id": "task_1735557998619_b1oyslm5s",
+      "type": "transfer",
+      "fromPosition": "01-M2-N2-C1",
+      "toPosition": "01-M1-N1-C1",
+      "skuCode": "1002",
+      "skuDescription": "Lonas Egípcias D+",
+      "palletsToTransfer": 4,
+      "status": "completed"
+    },
+    {
+      "id": "task_1735558247961_b7zug8759",
+      "type": "transfer",
+      "fromPosition": "01-M2-N2-C1",
+      "toPosition": "01-M1-N1-C1",
+      "skuCode": "1002",
+      "skuDescription": "Lonas Egípcias D+",
+      "palletsToTransfer": 4,
+      "status": "completed"
+    },
+    {
+      "id": "task_1735558276192_kss4nbhoj",
+      "type": "transfer",
+      "fromPosition": "01-M2-N2-C1",
+      "toPosition": "01-M1-N1-C1",
+      "skuCode": "1002",
+      "skuDescription": "Lonas Egípcias D+",
+      "palletsToTransfer": 4,
+      "status": "completed"
+    }
+  ]
+}
